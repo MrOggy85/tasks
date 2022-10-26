@@ -1,0 +1,16 @@
+.link {
+  padding: 0.5rem 1rem;
+  display: block;
+}
+
+.active {
+  padding: 0.5rem 1rem;
+  display: block;
+  margin: 0;
+  background: #cfe1fe;
+  font-weight: bold;
+}
+
+.linkWrapper {
+  padding: 0 !important;
+}
