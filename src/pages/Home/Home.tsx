@@ -9,7 +9,7 @@ import {
   FiRepeat,
   FiRefreshCw,
 } from 'react-icons/fi';
-import { format, isAfter } from 'date-fns';
+import { isAfter, isBefore, isSameDay } from 'date-fns';
 import { Container, InputGroup, Spinner, Table } from 'react-bootstrap';
 import getPrio from '../../core/getPrio';
 import { getAll, remove, done, unDone } from '../../core/tasks/taskSlice';
@@ -19,6 +19,133 @@ import { useAppSelector } from '../../core/redux/useAppSelector';
 import Select from '../../components/Select';
 import Button from '../../components/Button/Button';
 import DateText from '../../components/DateText';
+import { RootState } from '../../core/redux/store';
+
+type ListOfTasksProps = {
+  title: string;
+  tasks: RootState['tasks']['tasks'];
+  loading: boolean;
+  onRemove: (id: number) => void;
+  onEdit: (id: number) => void;
+  onDone: (id: number) => void;
+  onUnDone: (id: number) => void;
+};
+
+const ListOfTasks = ({
+  title,
+  tasks,
+  loading,
+  onRemove,
+  onEdit,
+  onDone,
+  onUnDone,
+}: ListOfTasksProps) => {
+  return (
+    <>
+      <h2>{title}</h2>
+      <Table bordered>
+        <thead>
+          <tr>
+            <th style={{ width: 6 }}>#</th>
+            <th style={{ width: 5 }}>Title</th>
+            <th style={{ width: 5 }}>Start</th>
+            <th style={{ width: 5 }}>End</th>
+            <th style={{ width: 5 }}></th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.map((x) => {
+            const prio = getPrio(x.priority);
+            const notStarted = x.startDate
+              ? isAfter(new Date(x.startDate), new Date())
+              : false;
+
+            return (
+              <tr key={x.id} style={{ opacity: notStarted ? 0.5 : 1 }}>
+                <td>
+                  <Button
+                    style={{ marginRight: 4 }}
+                    variant="danger"
+                    type="button"
+                    disabled={loading}
+                    onClick={() => {
+                      onRemove(x.id);
+                    }}
+                    content={<FiTrash2 />}
+                  />
+                  <Button
+                    style={{ marginRight: 4 }}
+                    variant="light"
+                    type="button"
+                    disabled={loading}
+                    onClick={() => {
+                      onEdit(x.id);
+                    }}
+                    content={<FiEdit />}
+                  />
+                  <Button
+                    style={{ marginRight: 4 }}
+                    variant="light"
+                    type="button"
+                    disabled={loading}
+                    onClick={() => {
+                      if (x.completionDate) {
+                        onUnDone(x.id);
+                      } else {
+                        onDone(x.id);
+                      }
+                    }}
+                    content={
+                      x.repeat ? (
+                        <FiRepeat />
+                      ) : x.completionDate ? (
+                        <FiCheckSquare />
+                      ) : (
+                        <FiSquare />
+                      )
+                    }
+                  />
+                  <span style={{ color: '#666', fontSize: 11 }}>
+                    ID: {x.id}
+                  </span>
+                </td>
+                <td>{x.title}</td>
+                <td>
+                  {x.startDate ? <DateText date={x.startDate} /> : 'None'}
+                </td>
+                <td>{x.endDate ? <DateText date={x.endDate} /> : 'None'}</td>
+                <td>
+                  <Badge text={prio.text} bg={prio.bg}>
+                    {prio.content}
+                  </Badge>
+                  {x.repeat ? (
+                    <Badge style={{ marginLeft: 4 }} bg="success">
+                      <FiRepeat />
+                    </Badge>
+                  ) : (
+                    ''
+                  )}
+                  {x.tags.map((t) => (
+                    <div
+                      key={t.id}
+                      style={{ marginLeft: 4, display: 'inline-block' }}
+                    >
+                      <Pill
+                        name={t.name}
+                        bgColor={t.bgColor}
+                        textColor={t.textColor}
+                      />
+                    </div>
+                  ))}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+    </>
+  );
+};
 
 type Sorting =
   | 'createdDate'
@@ -88,6 +215,19 @@ const Home = () => {
       }
     });
 
+  const todaysTasks = tasks.filter(
+    (x) => x.endDate && isSameDay(new Date(), new Date(x.endDate)),
+  );
+  const overdueTasks = tasks.filter(
+    (x) => x.endDate && isAfter(new Date(), new Date(x.endDate)),
+  );
+  const futureTasks = tasks.filter(
+    (x) =>
+      x.endDate &&
+      isBefore(new Date(), new Date(x.endDate)) &&
+      !isSameDay(new Date(), new Date(x.endDate)),
+  );
+
   const onUpdate = async () => {
     await dispatch(getAll());
   };
@@ -106,7 +246,6 @@ const Home = () => {
 
   return (
     <Container style={{ marginTop: 10 }}>
-      <h2>Tasks</h2>
       <Button
         style={{ marginBottom: 4 }}
         variant="success"
@@ -152,123 +291,34 @@ const Home = () => {
         />
       </InputGroup>
 
-      <Table bordered>
-        <thead>
-          <tr>
-            <th style={{ width: 6 }}>#</th>
-            <th style={{ width: 5 }}>Title</th>
-            <th style={{ width: 5 }}>Start</th>
-            <th style={{ width: 5 }}>End</th>
-            <th style={{ width: 5 }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((x) => {
-            const prio = getPrio(x.priority);
-            const notStarted = x.startDate
-              ? isAfter(new Date(x.startDate), new Date())
-              : false;
+      <ListOfTasks
+        title="Overdue"
+        tasks={overdueTasks}
+        loading={loading}
+        onRemove={onRemove}
+        onEdit={onEdit}
+        onDone={onDone}
+        onUnDone={onUnDone}
+      />
 
-            return (
-              <tr key={x.id} style={{ opacity: notStarted ? 0.5 : 1 }}>
-                <td>
-                  <Button
-                    style={{ marginRight: 4 }}
-                    variant="danger"
-                    type="button"
-                    disabled={loading}
-                    onClick={() => {
-                      onRemove(x.id);
-                    }}
-                    content={<FiTrash2 />}
-                  />
-                  <Button
-                    style={{ marginRight: 4 }}
-                    variant="light"
-                    type="button"
-                    disabled={loading}
-                    onClick={() => {
-                      onEdit(x.id);
-                    }}
-                    content={<FiEdit />}
-                  />
-                  <Button
-                    style={{ marginRight: 4 }}
-                    variant="light"
-                    type="button"
-                    disabled={loading}
-                    onClick={() => {
-                      if (x.completionDate) {
-                        onUnDone(x.id);
-                      } else {
-                        onDone(x.id);
-                      }
-                    }}
-                    content={
-                      x.repeat ? (
-                        <FiRepeat />
-                      ) : x.completionDate ? (
-                        <FiCheckSquare />
-                      ) : (
-                        <FiSquare />
-                      )
-                    }
-                  />
-                  <span style={{ color: '#666', fontSize: 11 }}>
-                    ID: {x.id}
-                  </span>
-                </td>
-                <td>{x.title}</td>
-                <td>
-                  {x.startDate ? (
-                    <DateText date={x.startDate} />
-                  ) : (
-                    // <div>
-                    //   <span>{format(new Date(x.startDate), 'yyyy')}</span>
-                    //   <span>{format(new Date(x.startDate), 'MMM')}</span>
-                    //   <span>{format(new Date(x.startDate), 'do')}</span>
-                    // </div>
-                    'None'
-                  )}
-
-                  {/* {x.startDate
-                    ? format(new Date(x.startDate), 'yyyy-MM-dd HH:mm')
-                    : 'None'} */}
-                </td>
-                <td>
-                  {x.endDate
-                    ? format(new Date(x.endDate), 'yyyy-MM-dd HH:mm')
-                    : 'None'}
-                </td>
-                <td>
-                  <Badge text={prio.text} bg={prio.bg}>
-                    {prio.content}
-                  </Badge>
-                  {x.repeat ? (
-                    <Badge style={{ marginLeft: 4 }} bg="success">
-                      <FiRepeat />
-                    </Badge>
-                  ) : (
-                    ''
-                  )}
-                  {x.tags.map((t) => (
-                    <div
-                      key={t.id}
-                      style={{ marginLeft: 4, display: 'inline-block' }}
-                    >
-                      <Pill
-                        name={t.name}
-                        bgColor={t.bgColor}
-                        textColor={t.textColor}
-                      />
-                    </div>
-                  ))}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+      <ListOfTasks
+        title="Today"
+        tasks={todaysTasks}
+        loading={loading}
+        onRemove={onRemove}
+        onEdit={onEdit}
+        onDone={onDone}
+        onUnDone={onUnDone}
+      />
+      <ListOfTasks
+        title="Coming Up"
+        tasks={futureTasks}
+        loading={loading}
+        onRemove={onRemove}
+        onEdit={onEdit}
+        onDone={onDone}
+        onUnDone={onUnDone}
+      />
     </Container>
   );
 };
