@@ -110,7 +110,10 @@ const ListOfTasks = ({
                     ID: {x.id}
                   </span>
                 </td>
-                <td>{x.title}</td>
+                <td>
+                  <p className={styles.title}>{x.title}</p>
+                  <p className={styles.description}>{x.description}</p>
+                </td>
                 <td>
                   {x.startDate ? <DateText date={x.startDate} /> : 'None'}
                 </td>

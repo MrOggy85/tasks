@@ -1,3 +1,5 @@
+import styles from './Pill.module.css';
+
 type Props = {
   name: string;
   bgColor: string;
@@ -7,14 +9,10 @@ type Props = {
 const Pill = ({ name, bgColor, textColor }: Props) => {
   return (
     <div
+      className={styles.pill}
       style={{
-        display: 'inline-block',
-        padding: '0 8px',
-        borderRadius: 6,
         backgroundColor: bgColor,
         color: textColor,
-        border: '1px solid #d1d4d6',
-        fontSize: '0.8em',
       }}
     >
       {name}
