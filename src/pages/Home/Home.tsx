@@ -20,6 +20,7 @@ import Select from '../../components/Select';
 import Button from '../../components/Button/Button';
 import DateText from '../../components/DateText';
 import { RootState } from '../../core/redux/store';
+import styles from './Home.module.css';
 
 type ListOfTasksProps = {
   title: string;
@@ -43,7 +44,7 @@ const ListOfTasks = ({
   return (
     <>
       <h2>{title}</h2>
-      <Table bordered>
+      <Table bordered className={styles.table}>
         <thead>
           <tr>
             <th style={{ width: 6 }}>#</th>
