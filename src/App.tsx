@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Task from './pages/Task';
 import TagList from './pages/Tag/List';
 import TagDetail from './pages/Tag/Detail';
+import Login from './pages/Login';
 
 type LinkItemProps = {
   url: string;
@@ -45,12 +46,16 @@ function App() {
         <NavItem>
           <LinkItem url="/tag" text="New Tag" pathname={location.pathname} />
         </NavItem>
+        <NavItem>
+          <LinkItem url="/login" text="Login" pathname={location.pathname} />
+        </NavItem>
       </Nav>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/task/:id" element={<Task />} />
         <Route path="/tag" element={<TagList />} />
         <Route path="/tag/:id" element={<TagDetail />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );
