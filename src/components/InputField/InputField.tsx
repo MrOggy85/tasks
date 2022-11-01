@@ -1,10 +1,5 @@
 import type { ComponentProps } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
-// import {
-//   Input,
-//   InputGroup,
-//   InputGroupText,
-// } from 'reactstrap';
 
 type FormProps = ComponentProps<typeof Form.Control>;
 

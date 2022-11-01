@@ -291,7 +291,7 @@ const Home = () => {
             value: x,
           }))}
           value={sortOrder}
-          setValue={(v) => setSortOrder(v as any)}
+          setValue={(v) => setSortOrder(v as 'asc' | 'desc')}
         />
       </InputGroup>
 

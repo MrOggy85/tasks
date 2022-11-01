@@ -4,7 +4,7 @@ import { load } from './localStorage';
 type Params = {
   path: string;
   method: Method;
-  data?: any;
+  data?: unknown;
 };
 
 async function request({ path, method, data }: Params) {
