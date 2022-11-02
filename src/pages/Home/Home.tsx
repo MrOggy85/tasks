@@ -48,7 +48,7 @@ const Home = () => {
 
   const tasks = rawTasks
     .filter((x) => {
-      if (x.completionDate && x.repeat) {
+      if (x.completionDate) {
         return false;
       }
       return true;
