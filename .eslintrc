@@ -16,6 +16,9 @@
     "import/resolver": {
       "typescript": true,
       "node": true
+    },
+    "react": {
+      "version": "detect"
     }
   },
   "rules": {
