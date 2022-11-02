@@ -227,9 +227,12 @@ const Home = () => {
   );
   const futureTasks = tasks.filter(
     (x) =>
-      x.endDate &&
-      isBefore(new Date(), new Date(x.endDate)) &&
-      !isSameDay(new Date(), new Date(x.endDate)),
+      (x.endDate &&
+        isBefore(new Date(), new Date(x.endDate)) &&
+        !isSameDay(new Date(), new Date(x.endDate))) ||
+      (x.startDate &&
+        isBefore(new Date(), new Date(x.startDate)) &&
+        !isSameDay(new Date(), new Date(x.startDate))),
   );
 
   const onUpdate = async () => {
