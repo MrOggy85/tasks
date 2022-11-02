@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from 'react';
+import { ComponentProps, useEffect, useState } from 'react';
 import format from 'date-fns/format';
 import { FiTrash2 } from 'react-icons/fi';
 import { parseCronExpression } from 'cron-schedule';
@@ -54,36 +54,41 @@ const Task = () => {
   const navigate = useNavigate();
   const params = useParams();
   const tasks = useAppSelector((x) => x.tasks.tasks);
+  console.log('Task', tasks);
   const loading = useAppSelector((x) => x.tasks.loading);
   const tags = useAppSelector((x) => x.tags.tags);
 
   const id = Number(params.id);
   const currentTask = id ? tasks.find((x) => x.id === id) : undefined;
-  const [title, setTitle] = useState(currentTask?.title || '');
-  const [description, setDescription] = useState(
-    currentTask?.description || '',
-  );
-  const [startDate, setStartDate] = useState<Date | undefined>(
-    currentTask?.startDate ? new Date(currentTask.startDate) : undefined,
-  );
-  const [endDate, setEndDate] = useState<Date | undefined>(
-    currentTask?.endDate ? new Date(currentTask.endDate) : undefined,
-  );
-  const [priority, setPriority] = useState<Task['priority']>(
-    currentTask?.priority || 0,
-  );
-  const [chosenTags, setChosenTags] = useState(
-    currentTask?.tags.map((x) => x.id) || [],
-  );
+  console.log('currentTask', currentTask);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [priority, setPriority] = useState<Task['priority']>(0);
+  const [chosenTags, setChosenTags] = useState<number[]>([]);
   const [tagSelect, setTagSelect] = useState<number>(0);
-
   const [repeatHelper, setRepeatHelper] = useState<CronType | ''>('');
-  const [repeatCronPattern, setRepeatCronPattern] = useState(
-    currentTask?.repeat || '',
-  );
-  const [repeatType, setRepeatType] = useState<Task['repeatType']>(
-    currentTask?.repeatType || 'completionDate',
-  );
+  const [repeatCronPattern, setRepeatCronPattern] = useState('');
+  const [repeatType, setRepeatType] =
+    useState<Task['repeatType']>('completionDate');
+
+  useEffect(() => {
+    if (currentTask) {
+      setTitle(currentTask.title);
+
+      setStartDate(
+        currentTask.startDate ? new Date(currentTask.startDate) : undefined,
+      );
+      setEndDate(
+        currentTask.endDate ? new Date(currentTask.endDate) : undefined,
+      );
+      setPriority(currentTask.priority || 0);
+      setChosenTags(currentTask.tags.map((x) => x.id) || []);
+      setRepeatCronPattern(currentTask.repeat);
+      setRepeatType(currentTask.repeatType);
+    }
+  }, [currentTask]);
 
   const onAdd = async () => {
     const action = await dispatch(
