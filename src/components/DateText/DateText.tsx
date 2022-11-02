@@ -3,6 +3,7 @@ import { format, isSameYear, isAfter } from 'date-fns';
 type Props = {
   date: string;
 };
+
 const DateText = ({ date }: Props) => {
   const now = new Date();
 
@@ -14,7 +15,7 @@ const DateText = ({ date }: Props) => {
 
   return (
     <div style={{ color }}>
-      {!isSameYear(now, new Date(date)) && <span>{year}</span>}
+      {!isSameYear(now, new Date(date)) && <span>{year} </span>}
       <span>{month} </span>
       <span>{day}</span>
     </div>
