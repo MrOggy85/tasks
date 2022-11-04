@@ -78,20 +78,26 @@ const Home = () => {
       }
     });
 
+  const now = new Date();
+
   const todaysTasks = tasks.filter(
-    (x) => x.endDate && isSameDay(new Date(), new Date(x.endDate)),
+    (x) => x.endDate && isSameDay(now, new Date(x.endDate)),
   );
+
   const overdueTasks = tasks.filter(
-    (x) => x.endDate && isAfter(new Date(), new Date(x.endDate)),
+    (x) =>
+      x.endDate &&
+      isAfter(now, new Date(x.endDate)) &&
+      !isSameDay(now, new Date(x.endDate)),
   );
   const futureTasks = tasks.filter(
     (x) =>
       (x.endDate &&
-        isBefore(new Date(), new Date(x.endDate)) &&
-        !isSameDay(new Date(), new Date(x.endDate))) ||
+        isBefore(now, new Date(x.endDate)) &&
+        !isSameDay(now, new Date(x.endDate))) ||
       (x.startDate &&
-        isBefore(new Date(), new Date(x.startDate)) &&
-        !isSameDay(new Date(), new Date(x.startDate))),
+        isBefore(now, new Date(x.startDate)) &&
+        !isSameDay(now, new Date(x.startDate))),
   );
 
   const onUpdate = async () => {
@@ -176,6 +182,7 @@ const Home = () => {
         onDone={onDone}
         onUnDone={onUnDone}
       />
+
       <ListOfTasks
         title="Coming Up"
         tasks={futureTasks}

@@ -1,4 +1,4 @@
-import { format, isSameYear, isAfter } from 'date-fns';
+import { format, isSameYear, isAfter, isSameDay } from 'date-fns';
 
 type Props = {
   date: string;
@@ -11,7 +11,12 @@ const DateText = ({ date }: Props) => {
   const month = format(new Date(date), 'MMM');
   const day = format(new Date(date), 'do');
 
-  const color = isAfter(now, new Date(date)) ? 'tomato' : undefined;
+  const taskDate = new Date(date);
+
+  let color = isAfter(now, taskDate) ? 'tomato' : undefined;
+  if (isSameDay(now, taskDate)) {
+    color = 'cornflowerblue';
+  }
 
   return (
     <div style={{ color }}>

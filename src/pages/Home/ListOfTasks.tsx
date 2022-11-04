@@ -1,5 +1,6 @@
 import { Table } from 'react-bootstrap';
 import Badge from 'react-bootstrap/Badge';
+import Spinner from 'react-bootstrap/Spinner';
 import {
   FiTrash2,
   FiEdit,
@@ -37,109 +38,113 @@ const ListOfTasks = ({
   return (
     <>
       <h2>{title}</h2>
-      <Table bordered className={styles.table}>
-        <thead>
-          <tr>
-            <th style={{ width: 6 }}>#</th>
-            <th style={{ width: 5 }}>Title</th>
-            <th style={{ width: 5 }}>Start</th>
-            <th style={{ width: 5 }}>End</th>
-            <th style={{ width: 5 }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((x) => {
-            const prio = getPrio(x.priority);
-            const notStarted = x.startDate
-              ? isAfter(new Date(x.startDate), new Date())
-              : false;
+      {tasks.length > 0 ? (
+        <Table bordered className={styles.table}>
+          <thead>
+            <tr>
+              <th style={{ width: '18%' }}>#</th>
+              <th>Title</th>
+              <th style={{ width: '8%' }}>Start</th>
+              <th style={{ width: '8%' }}>End</th>
+              <th style={{ width: '15%' }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.map((x) => {
+              const prio = getPrio(x.priority);
+              const notStarted = x.startDate
+                ? isAfter(new Date(x.startDate), new Date())
+                : false;
 
-            return (
-              <tr key={x.id} style={{ opacity: notStarted ? 0.5 : 1 }}>
-                <td>
-                  <Button
-                    style={{ marginRight: 4 }}
-                    variant="danger"
-                    type="button"
-                    disabled={loading}
-                    onClick={() => {
-                      onRemove(x.id);
-                    }}
-                    content={<FiTrash2 />}
-                  />
-                  <Button
-                    style={{ marginRight: 4 }}
-                    variant="light"
-                    type="button"
-                    disabled={loading}
-                    onClick={() => {
-                      onEdit(x.id);
-                    }}
-                    content={<FiEdit />}
-                  />
-                  <Button
-                    style={{ marginRight: 4 }}
-                    variant="light"
-                    type="button"
-                    disabled={loading}
-                    onClick={() => {
-                      if (x.completionDate) {
-                        onUnDone(x.id);
-                      } else {
-                        onDone(x.id);
+              return (
+                <tr key={x.id} style={{ opacity: notStarted ? 0.5 : 1 }}>
+                  <td>
+                    <Button
+                      style={{ marginRight: 4 }}
+                      variant="danger"
+                      type="button"
+                      disabled={loading}
+                      onClick={() => {
+                        onRemove(x.id);
+                      }}
+                      content={<FiTrash2 />}
+                    />
+                    <Button
+                      style={{ marginRight: 4 }}
+                      variant="light"
+                      type="button"
+                      disabled={loading}
+                      onClick={() => {
+                        onEdit(x.id);
+                      }}
+                      content={<FiEdit />}
+                    />
+                    <Button
+                      style={{ marginRight: 4 }}
+                      variant="light"
+                      type="button"
+                      disabled={loading}
+                      onClick={() => {
+                        if (x.completionDate) {
+                          onUnDone(x.id);
+                        } else {
+                          onDone(x.id);
+                        }
+                      }}
+                      content={
+                        x.repeat ? (
+                          <FiRepeat />
+                        ) : x.completionDate ? (
+                          <FiCheckSquare />
+                        ) : (
+                          <FiSquare />
+                        )
                       }
-                    }}
-                    content={
-                      x.repeat ? (
-                        <FiRepeat />
-                      ) : x.completionDate ? (
-                        <FiCheckSquare />
-                      ) : (
-                        <FiSquare />
-                      )
-                    }
-                  />
-                  <span style={{ color: '#666', fontSize: 11 }}>
-                    ID: {x.id}
-                  </span>
-                </td>
-                <td>
-                  <p className={styles.title}>{x.title}</p>
-                  <p className={styles.description}>{x.description}</p>
-                </td>
-                <td>
-                  {x.startDate ? <DateText date={x.startDate} /> : 'None'}
-                </td>
-                <td>{x.endDate ? <DateText date={x.endDate} /> : 'None'}</td>
-                <td>
-                  <Badge text={prio.text} bg={prio.bg}>
-                    {prio.content}
-                  </Badge>
-                  {x.repeat ? (
-                    <Badge style={{ marginLeft: 4 }} bg="success">
-                      <FiRepeat />
+                    />
+                    <span style={{ color: '#666', fontSize: 11 }}>
+                      ID: {x.id}
+                    </span>
+                  </td>
+                  <td>
+                    <p className={styles.title}>{x.title}</p>
+                    <p className={styles.description}>{x.description}</p>
+                  </td>
+                  <td>{x.startDate ? <DateText date={x.startDate} /> : '-'}</td>
+                  <td>{x.endDate ? <DateText date={x.endDate} /> : '-'}</td>
+                  <td>
+                    <Badge text={prio.text} bg={prio.bg}>
+                      {prio.content}
                     </Badge>
-                  ) : (
-                    ''
-                  )}
-                  {x.tags.map((t) => (
-                    <div
-                      key={t.id}
-                      style={{ marginLeft: 4, display: 'inline-block' }}
-                    >
-                      <Pill
-                        name={t.name}
-                        bgColor={t.bgColor}
-                        textColor={t.textColor}
-                      />
-                    </div>
-                  ))}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+                    {x.repeat ? (
+                      <Badge style={{ marginLeft: 4 }} bg="success">
+                        <FiRepeat />
+                      </Badge>
+                    ) : (
+                      ''
+                    )}
+                    {x.tags.map((t) => (
+                      <div
+                        key={t.id}
+                        style={{ marginLeft: 4, display: 'inline-block' }}
+                      >
+                        <Pill
+                          name={t.name}
+                          bgColor={t.bgColor}
+                          textColor={t.textColor}
+                        />
+                      </div>
+                    ))}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+      ) : loading ? (
+        <Spinner animation={'border'} variant="success" size="sm" />
+      ) : (
+        <p>No Tasks</p>
+      )}
     </>
   );
 };
