@@ -54,13 +54,12 @@ const Task = () => {
   const navigate = useNavigate();
   const params = useParams();
   const tasks = useAppSelector((x) => x.tasks.tasks);
-  console.log('Task', tasks);
   const loading = useAppSelector((x) => x.tasks.loading);
   const tags = useAppSelector((x) => x.tags.tags);
 
   const id = Number(params.id);
   const currentTask = id ? tasks.find((x) => x.id === id) : undefined;
-  console.log('currentTask', currentTask);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -142,7 +141,7 @@ const Task = () => {
         )
       : undefined;
   } catch (error) {
-    console.log('Failed to parse Cron');
+    console.log('Failed to parse Cron', error);
   }
 
   return (
@@ -341,7 +340,6 @@ const Task = () => {
           value={repeatHelper}
           onChange={(event) => {
             const value = event.target.value as CronType | undefined;
-            console.log('value', value);
             if (!value) {
               setRepeatCronPattern('');
             } else {
