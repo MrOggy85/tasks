@@ -76,6 +76,7 @@ const Task = () => {
   useEffect(() => {
     if (currentTask) {
       setTitle(currentTask.title);
+      setDescription(currentTask.description);
 
       setStartDate(
         currentTask.startDate ? new Date(currentTask.startDate) : undefined,
