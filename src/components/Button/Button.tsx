@@ -41,6 +41,7 @@ const Button = ({
       type={type || 'button'}
       disabled={disabled}
       onClick={onClick}
+      size="sm"
     >
       {content}
     </BootstrapButton>

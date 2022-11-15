@@ -3,7 +3,7 @@ import format from 'date-fns/format';
 import { FiTrash2 } from 'react-icons/fi';
 import { parseCronExpression } from 'cron-schedule';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Container, Form, InputGroup, Spinner } from 'react-bootstrap';
+import { Container, Form, InputGroup, Spinner } from 'react-bootstrap';
 import getPrio from '../../core/getPrio';
 import type { RootState } from '../../core/redux/store';
 import { add, update } from '../../core/tasks/taskSlice';
@@ -11,6 +11,8 @@ import getCron from '../../core/getCron';
 import PillWithX from '../../components/PillWithX';
 import { useAppSelector } from '../../core/redux/useAppSelector';
 import { useAppDispatch } from '../../core/redux/useAppDispatch';
+import Button from '../../components/Button';
+import styles from './Task.module.css';
 
 type Task = RootState['tasks']['tasks'][0];
 type CronType = Parameters<typeof getCron>[0];
@@ -34,7 +36,7 @@ const InputField = ({
   step,
   type,
 }: InputFieldProps) => (
-  <InputGroup>
+  <InputGroup className="mb-1">
     <InputGroup.Text>{label}</InputGroup.Text>
     <Form.Control
       step={step}
@@ -67,8 +69,11 @@ const Task = () => {
   const [priority, setPriority] = useState<Task['priority']>(0);
   const [chosenTags, setChosenTags] = useState<number[]>([]);
   const [tagSelect, setTagSelect] = useState<number>(0);
+  const [isRepeating, setIsRepeating] = useState(false);
   const [repeatHelper, setRepeatHelper] = useState<CronType | ''>('');
   const [repeatCronPattern, setRepeatCronPattern] = useState('');
+  const [repeatCompletionType, setRepeatCompletionType] = useState<'D'>('D');
+  const [repeatCompletionDuration, setRepeatCompletionDuration] = useState(0);
   const [repeatType, setRepeatType] =
     useState<Task['repeatType']>('completionDate');
 
@@ -85,12 +90,33 @@ const Task = () => {
       );
       setPriority(currentTask.priority || 0);
       setChosenTags(currentTask.tags.map((x) => x.id) || []);
-      setRepeatCronPattern(currentTask.repeat);
-      setRepeatType(currentTask.repeatType);
+
+      if (currentTask.repeat) {
+        setIsRepeating(true);
+        setRepeatType(currentTask.repeatType);
+        if (currentTask.repeatType === 'endDate') {
+          setRepeatCronPattern(currentTask.repeat);
+        } else {
+          setRepeatCompletionType(currentTask.repeat.substring(0, 1) as 'D');
+          setRepeatCompletionDuration(Number(currentTask.repeat.substring(1)));
+        }
+      }
     }
   }, [currentTask]);
 
   const onAdd = async () => {
+    let repeat = '';
+    if (isRepeating) {
+      if (!endDate) {
+        alert('When repeat, please provide endDate');
+        return;
+      }
+      repeat =
+        repeatType === 'endDate'
+          ? repeatCronPattern
+          : `${repeatCompletionType}${repeatCompletionDuration}`;
+    }
+
     const action = await dispatch(
       add({
         title,
@@ -98,7 +124,7 @@ const Task = () => {
         startDate: startDate ? startDate.toISOString() : undefined,
         endDate: endDate ? endDate.toISOString() : undefined,
         priority,
-        repeat: repeatCronPattern,
+        repeat,
         repeatType,
         tagIds: chosenTags,
       }),
@@ -112,6 +138,18 @@ const Task = () => {
   };
 
   const onEdit = async () => {
+    let repeat = '';
+    if (isRepeating) {
+      if (!endDate) {
+        alert('When repeat, please provide endDate');
+        return;
+      }
+      repeat =
+        repeatType === 'endDate'
+          ? repeatCronPattern
+          : `${repeatCompletionType}${repeatCompletionDuration}`;
+    }
+
     const action = await dispatch(
       update({
         id,
@@ -120,7 +158,7 @@ const Task = () => {
         startDate: startDate ? startDate.toISOString() : undefined,
         endDate: endDate ? endDate.toISOString() : undefined,
         priority,
-        repeat: repeatCronPattern,
+        repeat,
         repeatType,
         tagIds: chosenTags,
       }),
@@ -210,14 +248,13 @@ const Task = () => {
             type="time"
           />
           <Button
-            color="danger"
+            variant="outline-danger"
             type="button"
             onClick={() => {
               setStartDate(undefined);
             }}
-          >
-            <FiTrash2 />
-          </Button>
+            content={<FiTrash2 />}
+          />
         </InputGroup>
 
         <InputGroup className="mb-3 mt-3">
@@ -263,14 +300,13 @@ const Task = () => {
             type="time"
           />
           <Button
-            color="danger"
+            variant="outline-danger"
             type="button"
             onClick={() => {
               setEndDate(undefined);
             }}
-          >
-            <FiTrash2 />
-          </Button>
+            content={<FiTrash2 />}
+          />
         </InputGroup>
       </div>
 
@@ -310,13 +346,13 @@ const Task = () => {
             ))}
           </Form.Select>
           <Button
+            variant="outline-primary"
             disabled={chosenTags.includes(tagSelect) || !tagSelect}
             onClick={() => {
               setChosenTags([...chosenTags, tagSelect]);
             }}
-          >
-            ADD
-          </Button>
+            content="ADD"
+          />
         </InputGroup>
         {chosenTags.map((x) => {
           const tag = tags.find((t) => t.id === x);
@@ -334,75 +370,127 @@ const Task = () => {
         })}
       </div>
 
-      <InputGroup style={{ marginBottom: 5 }}>
-        <InputGroup.Text>Repeat</InputGroup.Text>
-        <Form.Select
-          value={repeatHelper}
-          onChange={(event) => {
-            const value = event.target.value as CronType | undefined;
-            if (!value) {
-              setRepeatCronPattern('');
-            } else {
-              setRepeatCronPattern(getCron(value, endDate, repeatType));
-            }
-            setRepeatHelper(value || '');
-          }}
-        >
-          <option value="">None</option>
-          {(
-            [
-              'daily',
-              'weekdays',
-              'weekends',
-              'weekly',
-              'monthly',
-              'yearly',
-            ] as CronType[]
-          ).map((x) => (
-            <option key={x} value={x}>
-              {x}
-            </option>
-          ))}
-        </Form.Select>
-      </InputGroup>
+      <Container className={styles.repeatContainer}>
+        <div className={styles.repeatHeader}>
+          <h3>Repeat</h3>
+          <Button
+            content={isRepeating ? 'YES' : 'NO'}
+            variant={isRepeating ? 'outline-primary' : 'outline-danger'}
+            onClick={() => {
+              setIsRepeating(!isRepeating);
+            }}
+          />
+        </div>
 
-      <InputField
-        label="Repeat CRON pattern"
-        value={repeatCronPattern}
-        onChange={setRepeatCronPattern}
-        type="text"
-      />
-      <p style={{ margin: 0, color: '#666', fontSize: 11 }}>
-        {nextDate
-          ? `Next Date: ${nextDate.toISOString()} UTC - ${nextDate.toLocaleString()} JST`
-          : ''}
-      </p>
-      <p style={{ margin: 0, color: '#666', fontSize: 11 }}>
-        {nextDate
-          ? `Now Date: ${new Date().toISOString()} UTC - ${new Date().toLocaleString()} JST`
-          : ''}
-      </p>
+        {isRepeating && (
+          <>
+            <InputGroup style={{ marginBottom: 5 }}>
+              <InputGroup.Text>RepeatType</InputGroup.Text>
+              <Form.Select
+                value={repeatType}
+                onChange={(event) => {
+                  setRepeatType(event.target.value as Task['repeatType']);
+                }}
+              >
+                {(['completionDate', 'endDate'] as Task['repeatType'][]).map(
+                  (x) => (
+                    <option key={x} value={x}>
+                      {x}
+                    </option>
+                  ),
+                )}
+              </Form.Select>
+            </InputGroup>
 
-      <InputGroup style={{ marginBottom: 5 }}>
-        <InputGroup.Text>RepeatType</InputGroup.Text>
-        <Form.Select
-          value={repeatType}
-          onChange={(event) => {
-            setRepeatType(event.target.value as Task['repeatType']);
-          }}
-        >
-          {(['completionDate', 'endDate'] as Task['repeatType'][]).map((x) => (
-            <option key={x} value={x}>
-              {x}
-            </option>
-          ))}
-        </Form.Select>
-      </InputGroup>
+            {repeatType === 'completionDate' ? (
+              <>
+                <InputGroup style={{ marginBottom: 5 }}>
+                  <InputGroup.Text>Type</InputGroup.Text>
+                  <Form.Select
+                    value={repeatCompletionType}
+                    onChange={(event) => {
+                      const value = event.target.value as 'D';
+                      setRepeatCompletionType(value);
+                    }}
+                  >
+                    {['D' as const].map((x) => (
+                      <option key={x} value={x}>
+                        {x}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </InputGroup>
+                <InputField
+                  label="Duration"
+                  value={repeatCompletionDuration}
+                  onChange={(newValue) => {
+                    setRepeatCompletionDuration(Number(newValue));
+                  }}
+                  type="number"
+                />
+              </>
+            ) : (
+              <>
+                <InputGroup style={{ marginBottom: 5 }}>
+                  <InputGroup.Text>Type</InputGroup.Text>
+                  <Form.Select
+                    value={repeatHelper}
+                    onChange={(event) => {
+                      const value = event.target.value as CronType | undefined;
+                      if (!value) {
+                        setRepeatCronPattern('');
+                      } else {
+                        setRepeatCronPattern(
+                          getCron(value, endDate, repeatType),
+                        );
+                      }
+                      setRepeatHelper(value || '');
+                    }}
+                  >
+                    <option value="">None</option>
+                    {(
+                      [
+                        'daily',
+                        'weekdays',
+                        'weekends',
+                        'weekly',
+                        'monthly',
+                        'yearly',
+                      ] as CronType[]
+                    ).map((x) => (
+                      <option key={x} value={x}>
+                        {x}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </InputGroup>
+
+                <InputField
+                  label="CRON pattern"
+                  value={repeatCronPattern}
+                  onChange={setRepeatCronPattern}
+                  type="text"
+                />
+                <p style={{ margin: 0, color: '#666', fontSize: 11 }}>
+                  {nextDate
+                    ? `Next Date: ${nextDate.toISOString()} UTC - ${nextDate.toLocaleString()} JST`
+                    : ''}
+                </p>
+                <p style={{ margin: 0, color: '#666', fontSize: 11 }}>
+                  {nextDate
+                    ? `Now Date: ${new Date().toISOString()} UTC - ${new Date().toLocaleString()} JST`
+                    : ''}
+                </p>
+              </>
+            )}
+          </>
+        )}
+      </Container>
 
       <InputGroup className="mb-3 mt-3">
         <Button
           disabled={loading}
-          color={id ? 'success' : 'primary'}
+          variant={id ? 'success' : 'primary'}
           type="button"
           onClick={() => {
             if (id) {
@@ -411,15 +499,16 @@ const Task = () => {
               onAdd();
             }
           }}
-        >
-          {loading ? (
-            <Spinner animation="border" size="sm" />
-          ) : id ? (
-            'UPDATE'
-          ) : (
-            'ADD'
-          )}
-        </Button>
+          content={
+            loading ? (
+              <Spinner animation="border" size="sm" />
+            ) : id ? (
+              'UPDATE'
+            ) : (
+              'ADD'
+            )
+          }
+        />
       </InputGroup>
     </Container>
   );

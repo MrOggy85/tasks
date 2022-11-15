@@ -1,0 +1,11 @@
+.repeatContainer {
+  padding: 0.5em 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.repeatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
