@@ -10,7 +10,15 @@ type Props = {
     | 'warning'
     | 'info'
     | 'dark'
-    | 'light';
+    | 'light'
+    | 'outline-primary'
+    | 'outline-secondary'
+    | 'outline-success'
+    | 'outline-danger'
+    | 'outline-warning'
+    | 'outline-info'
+    | 'outline-dark'
+    | 'outline-light';
   content: ReactNode;
   onClick: () => void;
   style?: React.CSSProperties | undefined;

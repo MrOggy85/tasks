@@ -60,8 +60,8 @@ const ListOfTasks = ({
                 <tr key={x.id} style={{ opacity: notStarted ? 0.5 : 1 }}>
                   <td>
                     <Button
-                      style={{ marginRight: 4 }}
-                      variant="danger"
+                      style={{ marginRight: 4, marginBottom: 4 }}
+                      variant="outline-danger"
                       type="button"
                       disabled={loading}
                       onClick={() => {
@@ -70,8 +70,8 @@ const ListOfTasks = ({
                       content={<FiTrash2 />}
                     />
                     <Button
-                      style={{ marginRight: 4 }}
-                      variant="light"
+                      style={{ marginRight: 4, marginBottom: 4 }}
+                      variant="outline-success"
                       type="button"
                       disabled={loading}
                       onClick={() => {
@@ -80,8 +80,8 @@ const ListOfTasks = ({
                       content={<FiEdit />}
                     />
                     <Button
-                      style={{ marginRight: 4 }}
-                      variant="light"
+                      style={{ marginRight: 4, marginBottom: 4 }}
+                      variant="outline-primary"
                       type="button"
                       disabled={loading}
                       onClick={() => {
