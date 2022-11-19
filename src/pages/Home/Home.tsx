@@ -171,6 +171,7 @@ const Home = () => {
         onEdit={onEdit}
         onDone={onDone}
         onUnDone={onUnDone}
+        tableStyle={{ border: '1px solid #c16e5f', color: '#c16e5f' }}
       />
 
       <ListOfTasks
@@ -191,6 +192,7 @@ const Home = () => {
         onEdit={onEdit}
         onDone={onDone}
         onUnDone={onUnDone}
+        tableStyle={{ color: '#919295' }}
       />
     </Container>
   );

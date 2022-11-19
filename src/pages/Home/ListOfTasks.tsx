@@ -20,6 +20,7 @@ type Props = {
   title: string;
   tasks: RootState['tasks']['tasks'];
   loading: boolean;
+  tableStyle?: React.CSSProperties;
   onRemove: (id: number) => void;
   onEdit: (id: number) => void;
   onDone: (id: number) => void;
@@ -30,6 +31,7 @@ const ListOfTasks = ({
   title,
   tasks,
   loading,
+  tableStyle,
   onRemove,
   onEdit,
   onDone,
@@ -37,12 +39,11 @@ const ListOfTasks = ({
 }: Props) => {
   return (
     <>
-      <h2>{title}</h2>
       {tasks.length > 0 ? (
-        <Table bordered className={styles.table}>
+        <Table bordered className={styles.table} style={tableStyle}>
           <thead>
             <tr>
-              <th style={{ width: '18%' }}>#</th>
+              <th style={{ width: '18%' }}>{title}</th>
               <th>Title</th>
               <th style={{ width: '8%' }}>Start</th>
               <th style={{ width: '8%' }}>End</th>
@@ -143,7 +144,9 @@ const ListOfTasks = ({
       ) : loading ? (
         <Spinner animation={'border'} variant="success" size="sm" />
       ) : (
-        <p>No Tasks</p>
+        <p>
+          <b>{title}</b> - No Tasks
+        </p>
       )}
     </>
   );
