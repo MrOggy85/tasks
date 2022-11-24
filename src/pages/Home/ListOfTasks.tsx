@@ -116,13 +116,6 @@ const ListOfTasks = ({
                     <Badge text={prio.text} bg={prio.bg}>
                       {prio.content}
                     </Badge>
-                    {x.repeat ? (
-                      <Badge style={{ marginLeft: 4 }} bg="success">
-                        <FiRepeat />
-                      </Badge>
-                    ) : (
-                      ''
-                    )}
                     {x.tags.map((t) => (
                       <div
                         key={t.id}
