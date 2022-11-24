@@ -142,7 +142,10 @@ const ListOfTasks = ({
           </tbody>
         </Table>
       ) : loading ? (
-        <Spinner animation={'border'} variant="success" size="sm" />
+        <div>
+          <b>{title}</b> -{' '}
+          <Spinner animation={'border'} variant="success" size="sm" />
+        </div>
       ) : (
         <p>
           <b>{title}</b> - No Tasks

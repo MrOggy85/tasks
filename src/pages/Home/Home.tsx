@@ -100,6 +100,8 @@ const Home = () => {
         !isSameDay(now, new Date(x.startDate))),
   );
 
+  const somedayTasks = tasks.filter((x) => !x.startDate && !x.endDate);
+
   const onUpdate = async () => {
     await dispatch(getAll());
   };
@@ -193,6 +195,16 @@ const Home = () => {
         onDone={onDone}
         onUnDone={onUnDone}
         tableStyle={{ color: '#919295' }}
+      />
+
+      <ListOfTasks
+        title="Someday"
+        tasks={somedayTasks}
+        loading={loading}
+        onRemove={onRemove}
+        onEdit={onEdit}
+        onDone={onDone}
+        onUnDone={onUnDone}
       />
     </Container>
   );
