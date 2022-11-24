@@ -11,3 +11,9 @@
   color: rgb(92, 92, 92);
   font-size: 0.7em;
 }
+
+.mobileDate {
+  margin: 0;
+  color: rgb(55, 55, 55);
+  font-size: 0.8em;
+}

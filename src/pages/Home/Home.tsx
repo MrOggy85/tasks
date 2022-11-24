@@ -9,6 +9,7 @@ import { useAppSelector } from '../../core/redux/useAppSelector';
 import Select from '../../components/Select';
 import Button from '../../components/Button/Button';
 import ListOfTasks from './ListOfTasks';
+import CardTasks from './CardTasks';
 
 type Sorting =
   | 'createdDate'
@@ -45,6 +46,8 @@ const Home = () => {
 
   const [sorting, setSorting] = useState<Sorting>('createdDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  const isMobileScreen = window.screen.width < 400;
 
   const tasks = rawTasks
     .filter((x) => {
@@ -165,47 +168,92 @@ const Home = () => {
         />
       </InputGroup>
 
-      <ListOfTasks
-        title="Overdue"
-        tasks={overdueTasks}
-        loading={loading}
-        onRemove={onRemove}
-        onEdit={onEdit}
-        onDone={onDone}
-        onUnDone={onUnDone}
-        tableStyle={{ border: '1px solid #c16e5f', color: '#c16e5f' }}
-      />
+      {isMobileScreen ? (
+        <>
+          <CardTasks
+            title="Overdue"
+            tasks={overdueTasks}
+            loading={loading}
+            onRemove={onRemove}
+            onEdit={onEdit}
+            onDone={onDone}
+            onUnDone={onUnDone}
+            cardStyle={{ border: '1px solid #c16e5f', color: '#c16e5f' }}
+          />
+          <CardTasks
+            title="Today"
+            tasks={todaysTasks}
+            loading={loading}
+            onRemove={onRemove}
+            onEdit={onEdit}
+            onDone={onDone}
+            onUnDone={onUnDone}
+          />
+          <CardTasks
+            title="Coming Up"
+            tasks={futureTasks}
+            loading={loading}
+            onRemove={onRemove}
+            onEdit={onEdit}
+            onDone={onDone}
+            onUnDone={onUnDone}
+            cardStyle={{ color: '#919295' }}
+          />
+          <CardTasks
+            title="Someday"
+            tasks={somedayTasks}
+            loading={loading}
+            onRemove={onRemove}
+            onEdit={onEdit}
+            onDone={onDone}
+            onUnDone={onUnDone}
+          />
+        </>
+      ) : (
+        <>
+          <ListOfTasks
+            title="Overdue"
+            tasks={overdueTasks}
+            loading={loading}
+            onRemove={onRemove}
+            onEdit={onEdit}
+            onDone={onDone}
+            onUnDone={onUnDone}
+            tableStyle={{ border: '1px solid #c16e5f', color: '#c16e5f' }}
+          />
 
-      <ListOfTasks
-        title="Today"
-        tasks={todaysTasks}
-        loading={loading}
-        onRemove={onRemove}
-        onEdit={onEdit}
-        onDone={onDone}
-        onUnDone={onUnDone}
-      />
+          <ListOfTasks
+            title="Today"
+            tasks={todaysTasks}
+            loading={loading}
+            onRemove={onRemove}
+            onEdit={onEdit}
+            onDone={onDone}
+            onUnDone={onUnDone}
+          />
 
-      <ListOfTasks
-        title="Coming Up"
-        tasks={futureTasks}
-        loading={loading}
-        onRemove={onRemove}
-        onEdit={onEdit}
-        onDone={onDone}
-        onUnDone={onUnDone}
-        tableStyle={{ color: '#919295' }}
-      />
+          <ListOfTasks
+            title="Coming Up"
+            tasks={futureTasks}
+            loading={loading}
+            onRemove={onRemove}
+            onEdit={onEdit}
+            onDone={onDone}
+            onUnDone={onUnDone}
+            tableStyle={{ color: '#919295' }}
+          />
 
-      <ListOfTasks
-        title="Someday"
-        tasks={somedayTasks}
-        loading={loading}
-        onRemove={onRemove}
-        onEdit={onEdit}
-        onDone={onDone}
-        onUnDone={onUnDone}
-      />
+          <ListOfTasks
+            title="Someday"
+            tasks={somedayTasks}
+            loading={loading}
+            onRemove={onRemove}
+            onEdit={onEdit}
+            onDone={onDone}
+            onUnDone={onUnDone}
+          />
+        </>
+      )}
     </Container>
   );
 };
