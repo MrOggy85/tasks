@@ -111,6 +111,11 @@ const CardTask = ({
             )
           }
         />
+        {loading && (
+          <div>
+            <Spinner animation="grow" />
+          </div>
+        )}
       </Card.Body>
     </Card>
   );
@@ -141,7 +146,15 @@ const CardTasks = ({
     <>
       {tasks.length > 0 ? (
         <>
-          <b>{title}</b>
+          <div>
+            <b>{title}</b>
+            {loading && (
+              <>
+                {' '}
+                <Spinner animation={'border'} variant="success" size="sm" />
+              </>
+            )}
+          </div>
           {tasks.map((x) => {
             return (
               <CardTask

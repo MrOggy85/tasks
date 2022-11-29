@@ -124,27 +124,33 @@ const Home = () => {
 
   return (
     <Container style={{ marginTop: 10 }}>
-      <Button
-        style={{ marginBottom: 4, marginRight: 4 }}
-        variant="outline-success"
-        type="button"
-        disabled={loading}
-        onClick={() => {
-          onUpdate();
-        }}
-        content={
-          loading ? <Spinner size="sm" animation={'border'} /> : <FiRefreshCw />
-        }
-      />
-      <Button
-        style={{ marginBottom: 4 }}
-        variant={showSorting ? 'secondary' : 'outline-secondary'}
-        type="button"
-        onClick={() => {
-          setShowSorting(!showSorting);
-        }}
-        content={<FiFilter />}
-      />
+      <div>
+        <Button
+          style={{ marginBottom: 4, marginRight: 4 }}
+          variant="outline-success"
+          type="button"
+          disabled={loading}
+          onClick={() => {
+            onUpdate();
+          }}
+          content={
+            loading ? (
+              <Spinner size="sm" animation={'border'} />
+            ) : (
+              <FiRefreshCw />
+            )
+          }
+        />
+        <Button
+          style={{ marginBottom: 4 }}
+          variant={showSorting ? 'secondary' : 'outline-secondary'}
+          type="button"
+          onClick={() => {
+            setShowSorting(!showSorting);
+          }}
+          content={<FiFilter />}
+        />
+      </div>
 
       {showSorting && (
         <InputGroup style={{ marginBottom: 5 }}>
