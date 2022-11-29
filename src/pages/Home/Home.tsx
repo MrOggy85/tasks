@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiRefreshCw } from 'react-icons/fi';
+import { FiRefreshCw, FiFilter } from 'react-icons/fi';
 import { isAfter, isBefore, isSameDay } from 'date-fns';
 import { Container, InputGroup, Spinner } from 'react-bootstrap';
 import { getAll, remove, done, unDone } from '../../core/tasks/taskSlice';
@@ -46,6 +46,7 @@ const Home = () => {
 
   const [sorting, setSorting] = useState<Sorting>('createdDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [showSorting, setShowSorting] = useState(false);
 
   const isMobileScreen = window.screen.width < 400;
 
@@ -124,8 +125,8 @@ const Home = () => {
   return (
     <Container style={{ marginTop: 10 }}>
       <Button
-        style={{ marginBottom: 4 }}
-        variant="success"
+        style={{ marginBottom: 4, marginRight: 4 }}
+        variant="outline-success"
         type="button"
         disabled={loading}
         onClick={() => {
@@ -135,38 +136,49 @@ const Home = () => {
           loading ? <Spinner size="sm" animation={'border'} /> : <FiRefreshCw />
         }
       />
+      <Button
+        style={{ marginBottom: 4 }}
+        variant={showSorting ? 'secondary' : 'outline-secondary'}
+        type="button"
+        onClick={() => {
+          setShowSorting(!showSorting);
+        }}
+        content={<FiFilter />}
+      />
 
-      <InputGroup style={{ marginBottom: 5 }}>
-        <Select
-          label="Sorting"
-          emptyOptionLabel="Select Sorting"
-          options={(
-            [
-              'createdDate',
-              'updatedDate',
-              'title',
-              'startDate',
-              'endDate',
-              'priority',
-            ] as Sorting[]
-          ).map((x) => ({
-            label: x,
-            value: x,
-          }))}
-          value={sorting}
-          setValue={(v) => setSorting(v as Sorting)}
-        />
-        <Select
-          label="Order"
-          emptyOptionLabel="Select Order"
-          options={['asc' as const, 'desc' as const].map((x) => ({
-            label: x,
-            value: x,
-          }))}
-          value={sortOrder}
-          setValue={(v) => setSortOrder(v as 'asc' | 'desc')}
-        />
-      </InputGroup>
+      {showSorting && (
+        <InputGroup style={{ marginBottom: 5 }}>
+          <Select
+            label="Sorting"
+            emptyOptionLabel="Select Sorting"
+            options={(
+              [
+                'createdDate',
+                'updatedDate',
+                'title',
+                'startDate',
+                'endDate',
+                'priority',
+              ] as Sorting[]
+            ).map((x) => ({
+              label: x,
+              value: x,
+            }))}
+            value={sorting}
+            setValue={(v) => setSorting(v as Sorting)}
+          />
+          <Select
+            label="Order"
+            emptyOptionLabel="Select Order"
+            options={['asc' as const, 'desc' as const].map((x) => ({
+              label: x,
+              value: x,
+            }))}
+            value={sortOrder}
+            setValue={(v) => setSortOrder(v as 'asc' | 'desc')}
+          />
+        </InputGroup>
+      )}
 
       {isMobileScreen ? (
         <>
