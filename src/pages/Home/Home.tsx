@@ -45,7 +45,7 @@ const Home = () => {
   const loading = useAppSelector((x) => x.tasks.loading);
 
   const [sorting, setSorting] = useState<Sorting>('createdDate');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   const isMobileScreen = window.screen.width < 400;
 
@@ -58,6 +58,7 @@ const Home = () => {
     })
     .sort((a, b) => {
       switch (sorting) {
+        default:
         case 'startDate':
           return sortDate(a.startDate, b.startDate, sortOrder);
         case 'endDate':
@@ -76,7 +77,6 @@ const Home = () => {
             : b.title.charCodeAt(0) - a.title.charCodeAt(0);
 
         case 'createdDate':
-        default:
           return sortDate(a.createdAt, b.createdAt, sortOrder);
       }
     });
