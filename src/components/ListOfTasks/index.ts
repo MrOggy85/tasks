@@ -1,1 +1,1 @@
-export { default } from './ListOfTasks'
+export { default } from './ListOfTasks';
