@@ -38,15 +38,28 @@ const InputField = ({
 }: InputFieldProps) => (
   <InputGroup className="mb-1">
     <InputGroup.Text>{label}</InputGroup.Text>
-    <Form.Control
-      step={step}
-      disabled={disabled}
-      type={type}
-      value={value}
-      onChange={({ target: { value } }) => {
-        onChange(value);
-      }}
-    />
+    {type === 'textarea' ? (
+      <Form.Control
+        disabled={disabled}
+        type="textarea"
+        value={value}
+        as={'textarea'}
+        rows={3}
+        onChange={({ target: { value } }) => {
+          onChange(value);
+        }}
+      />
+    ) : (
+      <Form.Control
+        step={step}
+        disabled={disabled}
+        type={type}
+        value={value}
+        onChange={({ target: { value } }) => {
+          onChange(value);
+        }}
+      />
+    )}
     {displayAfter && <InputGroup.Text>{displayAfter}</InputGroup.Text>}
   </InputGroup>
 );
