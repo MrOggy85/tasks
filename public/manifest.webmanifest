@@ -1,0 +1,15 @@
+{
+  "background_color": "#2E567F",
+  "description": "Task your Life",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "name": "Tasks",
+  "short_name": "Tasks",
+  "start_url": "/index.html"
+}
