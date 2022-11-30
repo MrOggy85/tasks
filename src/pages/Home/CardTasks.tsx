@@ -41,7 +41,7 @@ const CardTask = ({
     <Card style={{ marginBottom: 5, ...cardStyle }}>
       <Card.Body style={{ padding: '0.5em' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div>
+          <div style={{ maxWidth: '70%' }}>
             <p className={styles.title}>{title}</p>
             <p className={styles.description}>{description}</p>
           </div>
