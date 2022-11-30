@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
 self.addEventListener('install', (e) => {
-  console.log('[SW] Install');
+  console.log('[SW] Install', e);
 });
 
 const cacheName = 'js13kPWA-v1';
