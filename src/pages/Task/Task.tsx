@@ -218,14 +218,9 @@ const Task = () => {
               const month =
                 Number(newValue.split('-')[1]) - 1 || now.getMonth();
               const date = Number(newValue.split('-')[2]) || now.getDate();
-              const hour =
-                startDate?.getHours() !== undefined
-                  ? startDate.getHours()
-                  : now.getHours();
+              const hour = startDate?.getHours() ?? endDate?.getHours() ?? 6;
               const minute =
-                startDate?.getMinutes() !== undefined
-                  ? startDate.getMinutes()
-                  : now.getMinutes();
+                startDate?.getMinutes() ?? endDate?.getMinutes() ?? 30;
               setStartDate(new Date(year, month, date, hour, minute));
             }}
             type="date"
@@ -270,14 +265,9 @@ const Task = () => {
               const month =
                 Number(newValue.split('-')[1]) - 1 || now.getMonth();
               const date = Number(newValue.split('-')[2]) || now.getDate();
-              const hour =
-                endDate?.getHours() !== undefined
-                  ? endDate.getHours()
-                  : now.getHours();
+              const hour = endDate?.getHours() ?? startDate?.getHours() ?? 6;
               const minute =
-                endDate?.getMinutes() !== undefined
-                  ? endDate.getMinutes()
-                  : now.getMinutes();
+                endDate?.getMinutes() ?? startDate?.getMinutes() ?? 30;
               setEndDate(new Date(year, month, date, hour, minute));
             }}
             type="date"
