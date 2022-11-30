@@ -1,7 +1,7 @@
 {
   "background_color": "#2E567F",
   "description": "Task your Life",
-  "display": "fullscreen",
+  "display": "standalone",
   "icons": [
     {
       "src": "apple-touch-icon.png",
