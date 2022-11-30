@@ -10,6 +10,8 @@ const DateText = ({ date }: Props) => {
   const year = format(new Date(date), 'yyyy');
   const month = format(new Date(date), 'MMM');
   const day = format(new Date(date), 'do');
+  const hour = format(new Date(date), 'HH');
+  const minute = format(new Date(date), 'mm');
 
   const taskDate = new Date(date);
 
@@ -23,6 +25,10 @@ const DateText = ({ date }: Props) => {
       {!isSameYear(now, new Date(date)) && <span>{year} </span>}
       <span>{month} </span>
       <span>{day}</span>
+
+      <div style={{ fontSize: '0.8em' }}>
+        {hour}:{minute}
+      </div>
     </div>
   );
 };
