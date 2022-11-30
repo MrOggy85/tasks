@@ -44,8 +44,8 @@ const Home = () => {
   const rawTasks = useAppSelector((x) => x.tasks.tasks);
   const loading = useAppSelector((x) => x.tasks.loading);
 
-  const [sorting, setSorting] = useState<Sorting>('createdDate');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [sorting, setSorting] = useState<Sorting>('startDate');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [showSorting, setShowSorting] = useState(false);
 
   const isMobileScreen = window.screen.width < 400;
@@ -58,6 +58,7 @@ const Home = () => {
       return true;
     })
     .sort((a, b) => {
+      console.log('sorting', sorting);
       switch (sorting) {
         default:
         case 'startDate':
