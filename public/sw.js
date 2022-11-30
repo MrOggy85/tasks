@@ -7,18 +7,26 @@ self.addEventListener('install', (e) => {
 const cacheName = 'js13kPWA-v1';
 
 self.addEventListener('fetch', (e) => {
-  console.log('[sw] fetch...', e.request.method);
   if (e.request.method !== "GET") return;
 
   e.respondWith((async () => {
     const cache = await caches.open(cacheName);
     const cachedResponse = await cache.match(e.request);
-    console.log(`[SW] Fetching resource: ${e.request.url}`);
+
     if (cachedResponse) {
-      e.waitUntil(cache.add(e.request));
+      console.log('[SW] Cache hit!', e.request.url);
+      e.waitUntil(fetchNewData(e, cache));
       return cachedResponse;
     }
     // If we didn't find a match in the cache, use the network.
-    return fetch(e.request);
+    const response = await fetchNewData(e, cache)
+    return response;
   })());
 });
+
+async function fetchNewData(e, cache) {
+  console.log('[SW] Fetching new resource', e.request.url);
+  const response = await fetch(e.request);
+  cache.put(e.request, response.clone());
+  return response;
+}
