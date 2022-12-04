@@ -68,49 +68,53 @@ const CardTask = ({
             ))}
           </div>
         </div>
-
-        <Button
-          style={{ marginRight: 4, marginBottom: 4 }}
-          variant="outline-danger"
-          type="button"
-          disabled={loading}
-          onClick={() => {
-            onRemove(id);
-          }}
-          content={<FiTrash2 />}
-        />
-        <Button
-          style={{ marginRight: 4, marginBottom: 4 }}
-          variant="outline-success"
-          type="button"
-          disabled={loading}
-          onClick={() => {
-            onEdit(id);
-          }}
-          content={<FiEdit />}
-        />
-        <Button
-          style={{ marginRight: 4, marginBottom: 4 }}
-          variant="outline-primary"
-          type="button"
-          disabled={loading}
-          onClick={() => {
-            if (completionDate) {
-              onUnDone(id);
-            } else {
-              onDone(id);
+        <div className={styles.cardButtons}>
+          <Button
+            style={{ marginRight: 4, marginBottom: 4 }}
+            variant="outline-primary"
+            type="button"
+            // disabled={loading}
+            onClick={() => {
+              if (completionDate) {
+                onUnDone(id);
+              } else {
+                onDone(id);
+              }
+            }}
+            content={
+              repeat ? (
+                <FiRepeat />
+              ) : completionDate ? (
+                <FiCheckSquare />
+              ) : (
+                <FiSquare />
+              )
             }
-          }}
-          content={
-            repeat ? (
-              <FiRepeat />
-            ) : completionDate ? (
-              <FiCheckSquare />
-            ) : (
-              <FiSquare />
-            )
-          }
-        />
+          />
+          <div>
+            <Button
+              style={{ marginRight: 4, marginBottom: 4 }}
+              variant="outline-danger"
+              type="button"
+              // disabled={loading}
+              onClick={() => {
+                onRemove(id);
+              }}
+              content={<FiTrash2 />}
+            />
+            <Button
+              style={{ marginRight: 4, marginBottom: 4 }}
+              variant="outline-success"
+              type="button"
+              // disabled={loading}
+              onClick={() => {
+                onEdit(id);
+              }}
+              content={<FiEdit />}
+            />
+          </div>
+        </div>
+
         {loading && (
           <div>
             <Spinner animation="grow" />

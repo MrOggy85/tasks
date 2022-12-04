@@ -18,3 +18,9 @@
   color: rgb(55, 55, 55);
   font-size: 0.8em;
 }
+
+.cardButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.3em;
+}
