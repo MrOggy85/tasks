@@ -25,6 +25,25 @@ export const getAll = createAsyncThunk<Task[], void, EmptyObject>(
   },
 );
 
+type ThunkAPI = {
+  getState: () => RootState
+}
+
+function getTags(thunkApi: ThunkAPI, task: { tagIds: number[]}) {
+  const allTags = thunkApi.getState().tags.tags;
+
+  const tags = task.tagIds.map<Task['tags'][0]>(id => {
+    const tag = allTags.find(x => x.id === id)
+    return tag || {
+      id: -1,
+      name: 'fallback',
+      bgColor: 'black',
+      textColor: 'white'
+    }
+  })
+  return tags;
+}
+
 export const add = createAsyncThunk<boolean, Add, {
   state: RootState
 }>(
@@ -32,22 +51,10 @@ export const add = createAsyncThunk<boolean, Add, {
   async (task, thunkApi) => {
     const result = await addFromApi(task);
 
-    const allTags = thunkApi.getState().tags.tags;
-
-    const tags = task.tagIds.map<Task['tags'][0]>(id => {
-      const tag = allTags.find(x => x.id === id)
-      return tag || {
-        id: -1,
-        name: 'fallback',
-        bgColor: 'black',
-        textColor: 'white'
-      }
-    })
-
     thunkApi.dispatch(taskSlice.actions.add({
       ...task,
       id: result,
-      tags,
+      tags: getTags(thunkApi, task),
     }))
 
     await sendNotification(`Added ${task.title} Success!`)
@@ -56,11 +63,19 @@ export const add = createAsyncThunk<boolean, Add, {
   },
 );
 
-export const update = createAsyncThunk<boolean, Update, EmptyObject>(
+export const update = createAsyncThunk<boolean, Update, {
+  state: RootState
+}>(
   `${NAMESPACE}/update`,
   async (task, thunkApi) => {
     const result = await updateFromApi(task);
-    await thunkApi.dispatch(getAll());
+
+    thunkApi.dispatch(taskSlice.actions.update({
+      ...task,
+      tags: getTags(thunkApi, task),
+    }))
+
+    await sendNotification(`Updated ${task.title} Success!`)
 
     return result;
   },
@@ -79,21 +94,51 @@ export const remove = createAsyncThunk<boolean, number, EmptyObject>(
   },
 );
 
-export const done = createAsyncThunk<boolean, number, EmptyObject>(
+export const done = createAsyncThunk<boolean, number, {
+state: RootState
+}>(
   `${NAMESPACE}/done`,
   async (id, thunkApi) => {
     const result = await doneFromApi(id);
-    await thunkApi.dispatch(getAll());
+
+    const task = thunkApi.getState().tasks.tasks.find(x => x.id === id)
+    if (!task) {
+      throw new Error(`Could not find Task ${id} locally`)
+    }
+
+    thunkApi.dispatch(taskSlice.actions.update({
+      ...task,
+      completionDate: new Date().toISOString(),
+    }))
+
+    await sendNotification(`Marked as Done ${id} Success!`)
+
+    if (task.repeat) {
+      await thunkApi.dispatch(getAll());
+    }
 
     return result;
   },
 );
 
-export const unDone = createAsyncThunk<boolean, number, EmptyObject>(
+export const unDone = createAsyncThunk<boolean, number, {
+  state: RootState
+  }>(
   `${NAMESPACE}/unDone`,
   async (id, thunkApi) => {
     const result = await unDoneFromApi(id);
-    await thunkApi.dispatch(getAll());
+
+    const task = thunkApi.getState().tasks.tasks.find(x => x.id === id)
+    if (!task) {
+      throw new Error(`Could not find Task ${id} locally`)
+    }
+
+    thunkApi.dispatch(taskSlice.actions.update({
+      ...task,
+      completionDate: '',
+    }))
+
+    await sendNotification(`Marked as UnDone ${id} Success!`)
 
     return result;
   },
@@ -112,8 +157,18 @@ const taskSlice = createSlice({
     },
     remove(state, action: PayloadAction<number>) {
       state.tasks.splice(state.tasks.findIndex((task) => task.id === action.payload), 1);
-
-    }
+    },
+    update(state, action: PayloadAction<Task>) {
+      return {
+        ...state,
+        tasks: state.tasks.map(t => {
+          return t.id === action.payload.id ? {
+            ...t,
+            ...action.payload,
+          } : t
+        }),
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
