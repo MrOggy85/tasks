@@ -70,7 +70,10 @@ export const remove = createAsyncThunk<boolean, number, EmptyObject>(
   `${NAMESPACE}/remove`,
   async (id, thunkApi) => {
     const result = await removeFromApi(id);
-    await thunkApi.dispatch(getAll());
+
+    thunkApi.dispatch(taskSlice.actions.remove(id))
+
+    await sendNotification(`Deleted ${id} Success!`)
 
     return result;
   },
@@ -106,6 +109,10 @@ const taskSlice = createSlice({
   reducers: {
     add(state, action: PayloadAction<Task>) {
       state.tasks.push(action.payload)
+    },
+    remove(state, action: PayloadAction<number>) {
+      state.tasks.splice(state.tasks.findIndex((task) => task.id === action.payload), 1);
+
     }
   },
   extraReducers: (builder) => {
