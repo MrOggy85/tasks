@@ -58,7 +58,6 @@ const Home = () => {
       return true;
     })
     .sort((a, b) => {
-      console.log('sorting', sorting);
       switch (sorting) {
         default:
         case 'startDate':

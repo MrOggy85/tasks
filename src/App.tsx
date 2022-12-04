@@ -1,7 +1,6 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
 import NavItem from 'react-bootstrap/NavItem';
-import { useEffect } from 'react';
 import styles from './App.module.css';
 import Home from './pages/Home';
 import Task from './pages/Task';
@@ -29,7 +28,7 @@ const LinkItem = ({ url, text, pathname }: LinkItemProps) => {
   );
 };
 
-async function askForNotificationPermission() {
+async function _askForNotificationPermission() {
   if (Notification.permission === 'granted') {
     console.log('Notifications on!');
   } else if (Notification.permission !== 'denied') {
@@ -44,13 +43,6 @@ async function askForNotificationPermission() {
 
 function App() {
   const location = useLocation();
-
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
-    }
-    askForNotificationPermission();
-  }, []);
 
   return (
     <>
