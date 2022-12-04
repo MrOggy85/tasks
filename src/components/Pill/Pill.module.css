@@ -1,7 +1,6 @@
 .pill {
   display: inline-block;
-  padding: 0 0.2em;
+  padding: 0 0.3em;
   border-radius: 6px;
-  border: 1px solid #d1d4d6;
   font-size: 0.8em;
 }
