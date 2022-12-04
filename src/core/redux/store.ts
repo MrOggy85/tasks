@@ -1,5 +1,5 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { persistReducer } from 'redux-persist'
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { FLUSH, REHYDRATE, persistReducer, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import { sendReminder } from '../reminders';
 import rootReducer from './rootReducer';
@@ -19,6 +19,11 @@ const persistedReducer = persistReducer(persistConfig, rootReducer)
 const store = configureStore({
   reducer: persistedReducer,
   devTools: process.env.NODE_ENV !== 'production',
+  middleware: getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
+    }
+  })
 });
 
 export type RootState = ReturnType<typeof store.getState>;
