@@ -69,7 +69,8 @@ const Task = () => {
   const navigate = useNavigate();
   const params = useParams();
   const tasks = useAppSelector((x) => x.tasks.tasks);
-  const loading = useAppSelector((x) => x.tasks.loading);
+  const loadingAll = useAppSelector((x) => x.tasks.loadingAll);
+  const loadingChange = useAppSelector((x) => x.tasks.loadingChange);
   const tags = useAppSelector((x) => x.tags.tags);
 
   const id = Number(params.id);
@@ -492,7 +493,7 @@ const Task = () => {
 
       <InputGroup className="mb-3 mt-3">
         <Button
-          disabled={loading}
+          disabled={loadingAll || loadingChange}
           variant={id ? 'success' : 'primary'}
           type="button"
           onClick={() => {
@@ -503,7 +504,7 @@ const Task = () => {
             }
           }}
           content={
-            loading ? (
+            loadingAll || loadingChange ? (
               <Spinner animation="border" size="sm" />
             ) : id ? (
               'UPDATE'

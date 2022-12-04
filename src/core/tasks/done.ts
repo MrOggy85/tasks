@@ -1,7 +1,7 @@
 import request from '../request';
 
-async function done(id: number): Promise<boolean> {
-  const data = await request({ path: `/tasks/${id}/done`, method: 'POST' });
+async function done(id: number) {
+  const data = await request<boolean>({ path: `/tasks/${id}/done`, method: 'POST' });
   return data;
 }
 

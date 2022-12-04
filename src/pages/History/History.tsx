@@ -104,7 +104,7 @@ const Home = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const rawTasks = useAppSelector((x) => x.tasks.tasks);
-  const loading = useAppSelector((x) => x.tasks.loading);
+  const loading = useAppSelector((x) => x.tasks.loadingAll);
 
   // const [sorting, setSorting] = useState<Sorting>('createdDate');
   // const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');

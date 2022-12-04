@@ -7,8 +7,8 @@ type Add = {
   textColor: Tag['textColor'];
 };
 
-async function add(task: Add): Promise<boolean> {
-  const data = await request({
+async function add(task: Add) {
+  const data = await request<boolean>({
     path: '/tags',
     method: 'POST',
     data: {

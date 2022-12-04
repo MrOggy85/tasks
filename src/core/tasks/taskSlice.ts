@@ -1,5 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '../redux/store';
 import { EmptyObject } from '../../types';
+import sendNotification from '../sendNotification';
 import getAllTasksFromApi from './getAll';
 import addFromApi from './add';
 import updateFromApi from './update';
@@ -23,13 +25,34 @@ export const getAll = createAsyncThunk<Task[], void, EmptyObject>(
   },
 );
 
-export const add = createAsyncThunk<boolean, Add, EmptyObject>(
+export const add = createAsyncThunk<boolean, Add, {
+  state: RootState
+}>(
   `${NAMESPACE}/add`,
   async (task, thunkApi) => {
     const result = await addFromApi(task);
-    await thunkApi.dispatch(getAll());
 
-    return result;
+    const allTags = thunkApi.getState().tags.tags;
+
+    const tags = task.tagIds.map<Task['tags'][0]>(id => {
+      const tag = allTags.find(x => x.id === id)
+      return tag || {
+        id: -1,
+        name: 'fallback',
+        bgColor: 'black',
+        textColor: 'white'
+      }
+    })
+
+    thunkApi.dispatch(taskSlice.actions.add({
+      ...task,
+      id: result,
+      tags,
+    }))
+
+    await sendNotification(`Added ${task.title} Success!`)
+
+    return true;
   },
 );
 
@@ -77,75 +100,80 @@ const taskSlice = createSlice({
   name: NAMESPACE,
   initialState: {
     tasks: [] as Task[],
-    loading: false,
+    loadingAll: false,
+    loadingChange: false,
   },
-  reducers: {},
+  reducers: {
+    add(state, action: PayloadAction<Task>) {
+      state.tasks.push(action.payload)
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAll.fulfilled, (state, action) => {
         state.tasks = action.payload;
-        state.loading = false;
+        state.loadingAll = false;
       })
       .addCase(getAll.pending, (state) => {
-        state.loading = true;
+        state.loadingAll = true;
       })
       .addCase(getAll.rejected, (state) => {
-        state.loading = false;
+        state.loadingAll = false;
       });
 
     builder
       .addCase(add.fulfilled, (state, _) => {
-        state.loading = false;
+        state.loadingChange = false;
       })
       .addCase(add.pending, (state) => {
-        state.loading = true;
+        state.loadingChange = true;
       })
       .addCase(add.rejected, (state) => {
-        state.loading = false;
+        state.loadingChange = false;
       });
 
     builder
       .addCase(update.fulfilled, (state, _) => {
-        state.loading = false;
+        state.loadingChange = false;
       })
       .addCase(update.pending, (state) => {
-        state.loading = true;
+        state.loadingChange = true;
       })
       .addCase(update.rejected, (state) => {
-        state.loading = false;
+        state.loadingChange = false;
       });
 
     builder
       .addCase(remove.fulfilled, (state, _) => {
-        state.loading = false;
+        state.loadingChange = false;
       })
       .addCase(remove.pending, (state) => {
-        state.loading = true;
+        state.loadingChange = true;
       })
       .addCase(remove.rejected, (state) => {
-        state.loading = false;
+        state.loadingChange = false;
       });
 
     builder
       .addCase(done.fulfilled, (state, _) => {
-        state.loading = false;
+        state.loadingChange = false;
       })
       .addCase(done.pending, (state) => {
-        state.loading = true;
+        state.loadingChange = true;
       })
       .addCase(done.rejected, (state) => {
-        state.loading = false;
+        state.loadingChange = false;
       });
 
     builder
       .addCase(unDone.fulfilled, (state, _) => {
-        state.loading = false;
+        state.loadingChange = false;
       })
       .addCase(unDone.pending, (state) => {
-        state.loading = true;
+        state.loadingChange = true;
       })
       .addCase(unDone.rejected, (state) => {
-        state.loading = false;
+        state.loadingChange = false;
       });
   },
 });

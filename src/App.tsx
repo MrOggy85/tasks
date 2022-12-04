@@ -28,19 +28,6 @@ const LinkItem = ({ url, text, pathname }: LinkItemProps) => {
   );
 };
 
-async function _askForNotificationPermission() {
-  if (Notification.permission === 'granted') {
-    console.log('Notifications on!');
-  } else if (Notification.permission !== 'denied') {
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      new Notification('Thanks for Accepting!');
-    } else {
-      console.log('Notification permission', permission);
-    }
-  }
-}
-
 function App() {
   const location = useLocation();
 

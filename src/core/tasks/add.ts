@@ -12,8 +12,10 @@ type Add = {
   tagIds: number[];
 };
 
-async function add(task: Add): Promise<boolean> {
-  const data = await request({
+type RespondeModel = number;
+
+async function add(task: Add) {
+  const data = await request<RespondeModel>({
     path: '/tasks',
     method: 'POST',
     data: {

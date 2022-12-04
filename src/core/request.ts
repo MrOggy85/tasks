@@ -7,7 +7,7 @@ type Params = {
   data?: unknown;
 };
 
-async function request({ path, method, data }: Params) {
+async function request<T = unknown>({ path, method, data }: Params) {
   const baseURL = load('BASE_URL');
   if (!baseURL) {
     throw new Error('No baseURL!');
@@ -28,7 +28,7 @@ async function request({ path, method, data }: Params) {
     data,
   });
 
-  return response.data;
+  return response.data as T;
 }
 
 export default request;

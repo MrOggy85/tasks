@@ -13,8 +13,8 @@ type Update = {
   tagIds: number[];
 };
 
-async function update(task: Update): Promise<boolean> {
-  const data = await request({
+async function update(task: Update) {
+  const data = await request<boolean>({
     path: '/tasks',
     method: 'PUT',
     data: {

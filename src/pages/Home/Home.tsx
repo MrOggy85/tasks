@@ -8,6 +8,7 @@ import { useAppDispatch } from '../../core/redux/useAppDispatch';
 import { useAppSelector } from '../../core/redux/useAppSelector';
 import Select from '../../components/Select';
 import Button from '../../components/Button/Button';
+import sendNotification from '../../core/sendNotification';
 import ListOfTasks from './ListOfTasks';
 import CardTasks from './CardTasks';
 
@@ -42,7 +43,7 @@ const Home = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const rawTasks = useAppSelector((x) => x.tasks.tasks);
-  const loading = useAppSelector((x) => x.tasks.loading);
+  const loadingAll = useAppSelector((x) => x.tasks.loadingAll);
 
   const [sorting, setSorting] = useState<Sorting>('startDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -129,12 +130,12 @@ const Home = () => {
           style={{ marginBottom: 4, marginRight: 4 }}
           variant="outline-success"
           type="button"
-          disabled={loading}
+          disabled={loadingAll}
           onClick={() => {
             onUpdate();
           }}
           content={
-            loading ? (
+            loadingAll ? (
               <Spinner size="sm" animation={'border'} />
             ) : (
               <FiRefreshCw />
@@ -191,7 +192,7 @@ const Home = () => {
           <CardTasks
             title="Overdue"
             tasks={overdueTasks}
-            loading={loading}
+            loading={loadingAll}
             onRemove={onRemove}
             onEdit={onEdit}
             onDone={onDone}
@@ -201,7 +202,7 @@ const Home = () => {
           <CardTasks
             title="Today"
             tasks={todaysTasks}
-            loading={loading}
+            loading={loadingAll}
             onRemove={onRemove}
             onEdit={onEdit}
             onDone={onDone}
@@ -210,7 +211,7 @@ const Home = () => {
           <CardTasks
             title="Coming Up"
             tasks={futureTasks}
-            loading={loading}
+            loading={loadingAll}
             onRemove={onRemove}
             onEdit={onEdit}
             onDone={onDone}
@@ -220,7 +221,7 @@ const Home = () => {
           <CardTasks
             title="Someday"
             tasks={somedayTasks}
-            loading={loading}
+            loading={loadingAll}
             onRemove={onRemove}
             onEdit={onEdit}
             onDone={onDone}
@@ -232,7 +233,7 @@ const Home = () => {
           <ListOfTasks
             title="Overdue"
             tasks={overdueTasks}
-            loading={loading}
+            loading={loadingAll}
             onRemove={onRemove}
             onEdit={onEdit}
             onDone={onDone}
@@ -243,7 +244,7 @@ const Home = () => {
           <ListOfTasks
             title="Today"
             tasks={todaysTasks}
-            loading={loading}
+            loading={loadingAll}
             onRemove={onRemove}
             onEdit={onEdit}
             onDone={onDone}
@@ -253,7 +254,7 @@ const Home = () => {
           <ListOfTasks
             title="Coming Up"
             tasks={futureTasks}
-            loading={loading}
+            loading={loadingAll}
             onRemove={onRemove}
             onEdit={onEdit}
             onDone={onDone}
@@ -264,7 +265,7 @@ const Home = () => {
           <ListOfTasks
             title="Someday"
             tasks={somedayTasks}
-            loading={loading}
+            loading={loadingAll}
             onRemove={onRemove}
             onEdit={onEdit}
             onDone={onDone}

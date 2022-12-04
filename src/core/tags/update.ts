@@ -8,8 +8,8 @@ type Update = {
   textColor: Tag['textColor'];
 };
 
-async function update(task: Update): Promise<boolean> {
-  const data = await request({
+async function update(task: Update) {
+  const data = await request<boolean>({
     path: '/tags',
     method: 'PUT',
     data: {
