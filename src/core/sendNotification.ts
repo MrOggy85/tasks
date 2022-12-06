@@ -5,20 +5,23 @@ async function askForNotificationPermission() {
   } else if (Notification.permission !== 'denied') {
     const permission = await Notification.requestPermission();
     console.log('Notification permission', permission);
-    return permission === 'granted'
+    return permission === 'granted';
   }
 
   return false;
 }
 
 async function sendNotification(text: string) {
+  if (!window.Notification) {
+    return;
+  }
   if (Notification.permission === 'granted') {
     new Notification(text);
     return;
   }
 
   if (Notification.permission !== 'denied') {
-    const hasPermission = await askForNotificationPermission()
+    const hasPermission = await askForNotificationPermission();
     if (hasPermission) {
       new Notification(text);
       return;
