@@ -106,12 +106,14 @@ const Home = () => {
   );
 
   const somedayTasks = tasks.filter((x) => !x.startDate && !x.endDate);
-
   const onUpdate = async () => {
     await dispatch(getAll());
   };
   const onRemove = async (id: number) => {
-    await dispatch(remove(id));
+    const yes = confirm(`Delete ${id}?`);
+    if (yes) {
+      await dispatch(remove(id));
+    }
   };
   const onEdit = async (id: number) => {
     navigate(`/task/${id}`);
