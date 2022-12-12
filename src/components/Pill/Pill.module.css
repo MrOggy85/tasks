@@ -3,4 +3,6 @@
   padding: 0 0.3em;
   border-radius: 6px;
   font-size: 0.8em;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+    Liberation Mono, monospace;
 }
