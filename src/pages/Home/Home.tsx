@@ -260,7 +260,12 @@ const Home = () => {
             onEdit={onEdit}
             onDone={onDone}
             onUnDone={onUnDone}
-            tableStyle={{ color: '#919295' }}
+            tableStyle={{
+              color: '#919295',
+              display: 'block',
+              maxHeight: '30vw',
+              overflow: 'auto',
+            }}
           />
 
           <ListOfTasks
