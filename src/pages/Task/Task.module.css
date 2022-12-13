@@ -11,7 +11,7 @@
 }
 
 .datetimeContainer {
-  display: flex
+  display: flex;
 }
 
 .startDatetimeContainer {
@@ -27,7 +27,7 @@
 
 .dateContainer {
   display: flex;
-  flex: 1
+  flex: 1;
 }
 
 .dateLeftButton {
@@ -59,7 +59,8 @@
   .endDatetimeContainer {
     margin-left: 0.1rem;
   }
-  .dateLeftButton, .dateRightButton {
+  .dateLeftButton,
+  .dateRightButton {
     display: none !important;
   }
 }
