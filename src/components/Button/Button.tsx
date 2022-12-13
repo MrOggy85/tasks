@@ -22,6 +22,7 @@ type Props = {
   content: ReactNode;
   onClick: () => void;
   style?: React.CSSProperties | undefined;
+  className?: string;
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
 };
@@ -32,11 +33,13 @@ const Button = ({
   onClick,
   disabled,
   style,
+  className,
   type,
 }: Props) => {
   return (
     <BootstrapButton
       style={style}
+      className={className}
       variant={variant}
       type={type || 'button'}
       disabled={disabled}

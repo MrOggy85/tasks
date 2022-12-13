@@ -1,6 +1,12 @@
 import { ComponentProps, useEffect, useState } from 'react';
-import format from 'date-fns/format';
-import { FiTrash2 } from 'react-icons/fi';
+import { format, sub as dateSub, add as dateAdd } from 'date-fns';
+import {
+  FiCheckSquare,
+  FiSquare,
+  FiTrash2,
+  FiSkipForward,
+  FiSkipBack,
+} from 'react-icons/fi';
 import { parseCronExpression } from 'cron-schedule';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Form, InputGroup, Spinner } from 'react-bootstrap';
@@ -79,6 +85,7 @@ const Task = () => {
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [startEndDateSame, setStartEndDateSame] = useState(false);
   const [priority, setPriority] = useState<Task['priority']>(0);
   const [chosenTags, setChosenTags] = useState<number[]>([]);
   const [tagSelect, setTagSelect] = useState<number>(0);
@@ -184,6 +191,34 @@ const Task = () => {
     }
   };
 
+  const onTodayClick = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const hour = 6;
+    const minute = 30;
+    setStartDate(new Date(year, month, date, hour, minute));
+    setEndDate(new Date(year, month, date, hour, minute));
+  };
+
+  const onDateLeftClick = (date: Date, setDate: (date: Date) => void) => {
+    const newDate = dateSub(date, { days: 1 });
+    setDate(newDate);
+  };
+  const onDateRightClick = (date: Date, setDate: (date: Date) => void) => {
+    const newDate = dateAdd(date, { days: 1 });
+    setDate(newDate);
+  };
+  const onTimeLeftClick = (date: Date, setDate: (date: Date) => void) => {
+    const newDate = dateSub(date, { minutes: 30 });
+    setDate(newDate);
+  };
+  const onTimeRightClick = (date: Date, setDate: (date: Date) => void) => {
+    const newDate = dateAdd(date, { minutes: 30 });
+    setDate(newDate);
+  };
+
   let nextDate: Date | undefined = undefined;
   try {
     nextDate = repeatCronPattern
@@ -217,99 +252,242 @@ const Task = () => {
         type="textarea"
       />
 
-      <div style={{ display: 'flex' }}>
-        <InputGroup className="mb-3 mt-3">
-          <InputField
-            label="Start Date"
-            value={startDate ? format(startDate, 'yyyy-MM-dd') : ''}
-            onChange={(newValue) => {
-              if (!newValue) {
-                return;
-              }
-              const now = new Date();
-              const year = Number(newValue.split('-')[0]) || now.getFullYear();
-              const month =
-                Number(newValue.split('-')[1]) - 1 || now.getMonth();
-              const date = Number(newValue.split('-')[2]) || now.getDate();
-              const hour = startDate?.getHours() ?? endDate?.getHours() ?? 6;
-              const minute =
-                startDate?.getMinutes() ?? endDate?.getMinutes() ?? 30;
-              setStartDate(new Date(year, month, date, hour, minute));
-            }}
-            type="date"
-          />
-          <InputField
-            label="Start Time"
-            value={startDate ? format(startDate, 'HH:mm') : ''}
-            onChange={(newValue) => {
-              if (!newValue) {
-                return;
-              }
-              const now = new Date();
-              const year = startDate?.getFullYear() || now.getFullYear();
-              const month = startDate?.getMonth() || now.getMonth();
-              const date = startDate?.getDate() || now.getDate();
-              const hour = Number(newValue.split(':')[0]);
-              const minute = Number(newValue.split(':')[1]);
-              setStartDate(new Date(year, month, date, hour, minute));
-            }}
-            type="time"
-          />
-          <Button
-            variant="outline-danger"
-            type="button"
-            onClick={() => {
-              setStartDate(undefined);
-            }}
-            content={<FiTrash2 />}
-          />
-        </InputGroup>
+      <div>
+        <Button
+          variant="outline-primary"
+          type="button"
+          style={{ marginRight: '.2rem' }}
+          onClick={() => {
+            onTodayClick();
+          }}
+          content="Today"
+        />
 
-        <InputGroup className="mb-3 mt-3">
-          <InputField
-            label="End Date"
-            value={endDate ? format(endDate, 'yyyy-MM-dd') : ''}
-            onChange={(newValue) => {
-              if (!newValue) {
-                return;
-              }
-              const now = new Date();
-              const year = Number(newValue.split('-')[0]) || now.getFullYear();
-              const month =
-                Number(newValue.split('-')[1]) - 1 || now.getMonth();
-              const date = Number(newValue.split('-')[2]) || now.getDate();
-              const hour = endDate?.getHours() ?? startDate?.getHours() ?? 6;
-              const minute =
-                endDate?.getMinutes() ?? startDate?.getMinutes() ?? 30;
-              setEndDate(new Date(year, month, date, hour, minute));
-            }}
-            type="date"
-          />
-          <InputField
-            label="End Time"
-            value={endDate ? format(endDate, 'HH:mm') : ''}
-            onChange={(newValue) => {
-              if (!newValue) {
-                return;
-              }
-              const now = new Date();
-              const year = endDate?.getFullYear() || now.getFullYear();
-              const month = endDate?.getMonth() || now.getMonth();
-              const date = endDate?.getDate() || now.getDate();
-              const hour = Number(newValue.split(':')[0]);
-              const minute = Number(newValue.split(':')[1]);
-              setEndDate(new Date(year, month, date, hour, minute));
-            }}
-            type="time"
-          />
-          <Button
-            variant="outline-danger"
-            type="button"
-            onClick={() => {
-              setEndDate(undefined);
-            }}
-            content={<FiTrash2 />}
-          />
+        <Button
+          variant="outline-primary"
+          type="button"
+          onClick={() => {
+            setStartEndDateSame(!startEndDateSame);
+          }}
+          content={
+            startEndDateSame ? (
+              <>
+                <FiCheckSquare style={{ marginRight: '.2rem' }} />
+                Start = End
+              </>
+            ) : (
+              <>
+                <FiSquare style={{ marginRight: '.2rem' }} />
+                Start != End
+              </>
+            )
+          }
+        />
+      </div>
+
+      <div className={styles.datetimeContainer}>
+        {!startEndDateSame && (
+          <InputGroup className={styles.startDatetimeContainer}>
+            <div className={styles.dateContainer}>
+              <Button
+                variant="outline-primary"
+                type="button"
+                className={styles.dateLeftButton}
+                onClick={() => {
+                  onDateLeftClick(startDate || new Date(), setStartDate);
+                }}
+                content={<FiSkipBack />}
+              />
+              <InputField
+                label="Start Date"
+                value={startDate ? format(startDate, 'yyyy-MM-dd') : ''}
+                onChange={(newValue) => {
+                  if (!newValue) {
+                    return;
+                  }
+                  const now = new Date();
+                  const year =
+                    Number(newValue.split('-')[0]) ?? now.getFullYear();
+                  const month =
+                    Number(newValue.split('-')[1]) - 1 ?? now.getMonth();
+                  const date = Number(newValue.split('-')[2]) ?? now.getDate();
+                  const hour =
+                    startDate?.getHours() ?? endDate?.getHours() ?? 6;
+                  const minute =
+                    startDate?.getMinutes() ?? endDate?.getMinutes() ?? 30;
+                  setStartDate(new Date(year, month, date, hour, minute));
+                }}
+                type="date"
+              />
+              <Button
+                variant="outline-primary"
+                type="button"
+                className={styles.dateRightButton}
+                onClick={() => {
+                  onDateRightClick(startDate || new Date(), setStartDate);
+                }}
+                content={<FiSkipForward />}
+              />
+            </div>
+
+            <div className={styles.dateContainer}>
+              <Button
+                variant="outline-primary"
+                type="button"
+                className={styles.dateLeftButton}
+                onClick={() => {
+                  onTimeLeftClick(startDate || new Date(), setStartDate);
+                }}
+                content={<FiSkipBack />}
+              />
+              <InputField
+                label="Start Time"
+                value={startDate ? format(startDate, 'HH:mm') : ''}
+                onChange={(newValue) => {
+                  if (!newValue) {
+                    return;
+                  }
+                  const now = new Date();
+                  const year = startDate?.getFullYear() ?? now.getFullYear();
+                  const month = startDate?.getMonth() ?? now.getMonth();
+                  const date = startDate?.getDate() ?? now.getDate();
+                  const hour = Number(newValue.split(':')[0]);
+                  const minute = Number(newValue.split(':')[1]);
+                  setStartDate(new Date(year, month, date, hour, minute));
+                }}
+                type="time"
+              />
+              <Button
+                variant="outline-primary"
+                type="button"
+                className={styles.dateLeftButton}
+                onClick={() => {
+                  onTimeRightClick(startDate || new Date(), setStartDate);
+                }}
+                content={<FiSkipForward />}
+              />
+            </div>
+            <div style={{ display: 'block', width: '100%' }}>
+              <Button
+                variant="outline-danger"
+                type="button"
+                onClick={() => {
+                  setStartDate(undefined);
+                }}
+                content={<FiTrash2 />}
+              />
+            </div>
+          </InputGroup>
+        )}
+
+        <InputGroup className={styles.endDatetimeContainer}>
+          <div className={styles.dateContainer}>
+            <Button
+              variant="outline-primary"
+              type="button"
+              className={styles.dateLeftButton}
+              onClick={() => {
+                onDateLeftClick(endDate || new Date(), setEndDate);
+                if (startEndDateSame) {
+                  onDateLeftClick(startDate || new Date(), setStartDate);
+                }
+              }}
+              content={<FiSkipBack />}
+            />
+            <InputField
+              label={startEndDateSame ? 'Date' : 'End Date'}
+              value={endDate ? format(endDate, 'yyyy-MM-dd') : ''}
+              onChange={(newValue) => {
+                if (!newValue) {
+                  return;
+                }
+                const now = new Date();
+                const year =
+                  Number(newValue.split('-')[0]) ?? now.getFullYear();
+                const month =
+                  Number(newValue.split('-')[1]) - 1 ?? now.getMonth();
+                const date = Number(newValue.split('-')[2]) ?? now.getDate();
+                const hour = endDate?.getHours() ?? startDate?.getHours() ?? 6;
+                const minute =
+                  endDate?.getMinutes() ?? startDate?.getMinutes() ?? 30;
+                setEndDate(new Date(year, month, date, hour, minute));
+
+                if (startEndDateSame) {
+                  setStartDate(new Date(year, month, date, hour, minute));
+                }
+              }}
+              type="date"
+            />
+            <Button
+              variant="outline-primary"
+              type="button"
+              className={styles.dateRightButton}
+              onClick={() => {
+                onDateRightClick(endDate || new Date(), setEndDate);
+                if (startEndDateSame) {
+                  onDateRightClick(startDate || new Date(), setStartDate);
+                }
+              }}
+              content={<FiSkipForward />}
+            />
+          </div>
+          <div className={styles.dateContainer}>
+            <Button
+              variant="outline-primary"
+              type="button"
+              className={styles.dateLeftButton}
+              onClick={() => {
+                onTimeLeftClick(endDate || new Date(), setEndDate);
+                if (startEndDateSame) {
+                  onTimeLeftClick(startDate || new Date(), setStartDate);
+                }
+              }}
+              content={<FiSkipBack />}
+            />
+            <InputField
+              label={startEndDateSame ? 'Time' : 'End Time'}
+              value={endDate ? format(endDate, 'HH:mm') : ''}
+              onChange={(newValue) => {
+                if (!newValue) {
+                  return;
+                }
+                const now = new Date();
+                const year = endDate?.getFullYear() || now.getFullYear();
+                const month = endDate?.getMonth() || now.getMonth();
+                const date = endDate?.getDate() || now.getDate();
+                const hour = Number(newValue.split(':')[0]);
+                const minute = Number(newValue.split(':')[1]);
+                setEndDate(new Date(year, month, date, hour, minute));
+
+                if (startEndDateSame) {
+                  setStartDate(new Date(year, month, date, hour, minute));
+                }
+              }}
+              type="time"
+            />
+            <Button
+              variant="outline-primary"
+              type="button"
+              className={styles.dateRightButton}
+              onClick={() => {
+                onTimeRightClick(endDate || new Date(), setEndDate);
+                if (startEndDateSame) {
+                  onTimeRightClick(startDate || new Date(), setStartDate);
+                }
+              }}
+              content={<FiSkipForward />}
+            />
+          </div>
+          <div style={{ display: 'block', width: '100%' }}>
+            <Button
+              variant="outline-danger"
+              type="button"
+              onClick={() => {
+                setEndDate(undefined);
+              }}
+              content={<FiTrash2 />}
+            />
+          </div>
         </InputGroup>
       </div>
 

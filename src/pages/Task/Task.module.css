@@ -9,3 +9,57 @@
   justify-content: space-between;
   align-items: flex-start;
 }
+
+.datetimeContainer {
+  display: flex
+}
+
+.startDatetimeContainer {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+}
+.endDatetimeContainer {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dateContainer {
+  display: flex;
+  flex: 1
+}
+
+:global(.input-group-text) {
+  padding: 0 0.3rem;
+}
+
+@media only screen and (max-width: 400px) {
+  .datetimeContainer {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (min-width: 400px) {
+  .startDatetimeContainer {
+    margin-right: 0.1rem;
+  }
+  .endDatetimeContainer {
+    margin-left: 0.1rem;
+  }
+  .dateLeftButton, .dateRightButton {
+    display: none;
+  }
+}
+
+.dateLeftButton {
+  margin-right: 0.2rem;
+  margin-bottom: 0.25rem;
+  min-width: 2.5rem;
+}
+
+.dateRightButton {
+  margin-left: 0.2rem;
+  margin-bottom: 0.25rem;
+  min-width: 2.5rem;
+}
