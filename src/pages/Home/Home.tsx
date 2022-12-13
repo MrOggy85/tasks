@@ -8,7 +8,6 @@ import { useAppDispatch } from '../../core/redux/useAppDispatch';
 import { useAppSelector } from '../../core/redux/useAppSelector';
 import Select from '../../components/Select';
 import Button from '../../components/Button/Button';
-import sendNotification from '../../core/sendNotification';
 import ListOfTasks from './ListOfTasks';
 import CardTasks from './CardTasks';
 

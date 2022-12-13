@@ -360,7 +360,7 @@ const Task = () => {
               <Button
                 variant="outline-primary"
                 type="button"
-                className={styles.dateLeftButton}
+                className={styles.dateRightButton}
                 onClick={() => {
                   onTimeRightClick(startDate || new Date(), setStartDate);
                 }}
