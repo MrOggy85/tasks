@@ -1,5 +1,4 @@
 import { Table } from 'react-bootstrap';
-import Badge from 'react-bootstrap/Badge';
 import Spinner from 'react-bootstrap/Spinner';
 import {
   FiTrash2,
@@ -52,7 +51,7 @@ const ListOfTasks = ({
           </thead>
           <tbody>
             {tasks.map((x) => {
-              const prio = getPrio(x.priority);
+              const PrioIcon = getPrio(x.priority);
               const notStarted = x.startDate
                 ? isAfter(new Date(x.startDate), new Date())
                 : false;
@@ -113,9 +112,7 @@ const ListOfTasks = ({
                   <td>{x.startDate ? <DateText date={x.startDate} /> : '-'}</td>
                   <td>{x.endDate ? <DateText date={x.endDate} /> : '-'}</td>
                   <td>
-                    <Badge text={prio.text} bg={prio.bg}>
-                      {prio.content}
-                    </Badge>
+                    {PrioIcon && <PrioIcon />}
                     {x.tags.map((t) => (
                       <div
                         key={t.id}

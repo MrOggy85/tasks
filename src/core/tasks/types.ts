@@ -4,7 +4,7 @@ export type Task = {
   id: number;
   title: string;
   description: string;
-  priority: 0 | 1 | 2 | 3 | 4;
+  priority: 0 | 1 | 2;
   startDate?: string;
   endDate?: string;
   completionDate?: string;

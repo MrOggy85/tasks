@@ -4,7 +4,6 @@ import { FiTrash2 } from 'react-icons/fi';
 import { parseCronExpression } from 'cron-schedule';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Form, InputGroup, Spinner } from 'react-bootstrap';
-import getPrio from '../../core/getPrio';
 import type { RootState } from '../../core/redux/store';
 import { add, update } from '../../core/tasks/taskSlice';
 import getCron from '../../core/getCron';
@@ -325,9 +324,9 @@ const Task = () => {
             );
           }}
         >
-          {([1, 2, 3, 4] as Task['priority'][]).map((x) => (
+          {([0, 1, 2] as Task['priority'][]).map((x) => (
             <option key={x} value={x}>
-              {getPrio(x).content}
+              {x}
             </option>
           ))}
         </Form.Select>
