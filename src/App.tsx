@@ -45,7 +45,7 @@ function App() {
           />
         </NavItem>
         <NavItem>
-          <LinkItem url="/tag" text="New Tag" pathname={location.pathname} />
+          <LinkItem url="/tag" text="Tags" pathname={location.pathname} />
         </NavItem>
         <NavItem>
           <LinkItem url="/login" text="Login" pathname={location.pathname} />

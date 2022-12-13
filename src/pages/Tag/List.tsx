@@ -1,10 +1,11 @@
-import { useNavigate } from 'react-router-dom';
-import { FiEdit, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
-import { Button, Container, Spinner, Table } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import { FiEdit, FiRefreshCw, FiTrash2, FiPlusCircle } from 'react-icons/fi';
+import { Container, Spinner, Table } from 'react-bootstrap';
 import { getAll, remove } from '../../core/tags/tagSlice';
 import Pill from '../../components/Pill';
 import { useAppDispatch } from '../../core/redux/useAppDispatch';
 import { useAppSelector } from '../../core/redux/useAppSelector';
+import Button from '../../components/Button';
 
 const TagList = () => {
   const dispatch = useAppDispatch();
@@ -27,16 +28,28 @@ const TagList = () => {
     <Container style={{ marginTop: 10 }}>
       <h2>Tags</h2>
       <Button
-        style={{ marginBottom: 4 }}
-        color="primary"
+        style={{ marginBottom: 4, marginRight: 4 }}
+        variant="success"
         type="button"
         disabled={loading}
         onClick={() => {
           onUpdate();
         }}
-      >
-        {loading ? <Spinner size="sm" animation="border" /> : <FiRefreshCw />}
-      </Button>
+        content={
+          loading ? <Spinner size="sm" animation="border" /> : <FiRefreshCw />
+        }
+      />
+      <Button
+        style={{ marginBottom: 4 }}
+        variant="outline-primary"
+        type="button"
+        disabled={loading}
+        content={
+          <Link to="/tag/0">
+            <FiPlusCircle />
+          </Link>
+        }
+      />
 
       <Table bordered>
         <thead>
@@ -54,26 +67,24 @@ const TagList = () => {
                 <td>
                   <Button
                     style={{ marginRight: 4 }}
-                    color="light"
+                    variant="light"
                     type="button"
                     disabled={loading}
                     onClick={() => {
                       onRemove(x.id);
                     }}
-                  >
-                    <FiTrash2 />
-                  </Button>
+                    content={<FiTrash2 />}
+                  />
                   <Button
                     style={{ marginRight: 4 }}
-                    color="light"
+                    variant="light"
                     type="button"
                     disabled={loading}
                     onClick={() => {
                       onEdit(x.id);
                     }}
-                  >
-                    <FiEdit />
-                  </Button>
+                    content={<FiEdit />}
+                  />
                   <span style={{ color: '#666', fontSize: 11 }}>
                     ID: {x.id}
                   </span>

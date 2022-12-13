@@ -11,7 +11,7 @@ import { isAfter } from 'date-fns';
 import getPrio from '../../core/getPrio';
 import Pill from '../../components/Pill';
 import DateText from '../../components/DateText';
-import Button from '../../components/Button/Button';
+import Button from '../../components/Button';
 import { RootState } from '../../core/redux/store';
 import styles from './Home.module.css';
 

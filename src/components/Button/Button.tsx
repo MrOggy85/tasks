@@ -20,7 +20,7 @@ type Props = {
     | 'outline-dark'
     | 'outline-light';
   content: ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
   style?: React.CSSProperties | undefined;
   className?: string;
   disabled?: boolean;
