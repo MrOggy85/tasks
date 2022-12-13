@@ -17,16 +17,16 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.1",
-    "axios": "^1.2.0",
+    "axios": "^1.2.1",
     "bootstrap": "^5.2.3",
     "cron-schedule": "^3.0.6",
     "date-fns": "^2.29.3",
     "react": "^18.2.0",
-    "react-bootstrap": "^2.6.0",
+    "react-bootstrap": "^2.7.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.4.3",
+    "react-router-dom": "^6.4.5",
     "redux-persist": "^6.0.0"
   },
   "devDependencies": {
