@@ -1,13 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import { FiCheckSquare, FiEdit, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
-import { isSameDay } from 'date-fns';
+import { format } from 'date-fns';
 import { Container, ListGroup, Spinner } from 'react-bootstrap';
 import { getAll, remove, done, unDone } from '../../core/tasks/taskSlice';
 import { useAppDispatch } from '../../core/redux/useAppDispatch';
 import { useAppSelector } from '../../core/redux/useAppSelector';
 import Button from '../../components/Button/Button';
 import IdText from '../../components/IdText';
+import type { RootState } from '../../core/redux/store';
 import styles from './History.module.css';
+
+type Task = RootState['tasks']['tasks'][0];
+
+function getKeys<T>(obj: Record<string, unknown>): (keyof T)[] {
+  return Object.keys(obj) as (keyof T)[];
+}
 
 function sortDate(
   aDate: string | undefined,
@@ -106,9 +113,6 @@ const Home = () => {
   const rawTasks = useAppSelector((x) => x.tasks.tasks);
   const loading = useAppSelector((x) => x.tasks.loadingAll);
 
-  // const [sorting, setSorting] = useState<Sorting>('createdDate');
-  // const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-
   const tasks = rawTasks
     .filter((x) => {
       if (!x.completionDate) {
@@ -120,27 +124,17 @@ const Home = () => {
       return sortDate(a.completionDate, b.completionDate, 'desc');
     });
 
-  const todaysTasks = tasks.filter(
-    (x) =>
-      x.completionDate && isSameDay(new Date(), new Date(x.completionDate)),
-  );
+  const taskPerDate: Record<string, Task[]> = {};
 
-  const previousTasks = tasks.filter(
-    (x) =>
-      x.completionDate && !isSameDay(new Date(), new Date(x.completionDate)),
-  );
-  // const overdueTasks = tasks.filter(
-  //   (x) => x.endDate && isAfter(new Date(), new Date(x.endDate)),
-  // );
-  // const futureTasks = tasks.filter(
-  //   (x) =>
-  //     (x.endDate &&
-  //       isBefore(new Date(), new Date(x.endDate)) &&
-  //       !isSameDay(new Date(), new Date(x.endDate))) ||
-  //     (x.startDate &&
-  //       isBefore(new Date(), new Date(x.startDate)) &&
-  //       !isSameDay(new Date(), new Date(x.startDate))),
-  // );
+  tasks.forEach((x) => {
+    if (!x.completionDate) {
+      return;
+    }
+    const dateText = format(new Date(x.completionDate), 'yyyy-MM-dd');
+    const dayText = format(new Date(x.completionDate), 'EEEE');
+    const d = `${dateText} ${dayText}`;
+    taskPerDate[d] = [...(taskPerDate[d] || []), x];
+  });
 
   const onUpdate = async () => {
     await dispatch(getAll());
@@ -175,38 +169,28 @@ const Home = () => {
       />
 
       <ListGroup>
-        <h3>Today</h3>
-        {todaysTasks.map((x) => {
+        {getKeys<typeof taskPerDate>(taskPerDate).map((date) => {
+          const taskOfTheDay = taskPerDate[date] || [];
+
           return (
-            <ListGroupItem
-              key={x.id}
-              id={x.id}
-              title={x.title}
-              completionDate={x.completionDate || ''}
-              loading={loading}
-              onDone={onDone}
-              onUnDone={onUnDone}
-              onRemove={onRemove}
-              onEdit={onEdit}
-            />
-          );
-        })}
-      </ListGroup>
-      <ListGroup>
-        <h3>Previous</h3>
-        {previousTasks.map((x) => {
-          return (
-            <ListGroupItem
-              key={x.id}
-              id={x.id}
-              title={x.title}
-              completionDate={x.completionDate || ''}
-              loading={loading}
-              onDone={onDone}
-              onUnDone={onUnDone}
-              onRemove={onRemove}
-              onEdit={onEdit}
-            />
+            <>
+              <h3 style={{ marginTop: '0.5rem' }}>{date}</h3>
+              {taskOfTheDay.map((x) => {
+                return (
+                  <ListGroupItem
+                    key={x.id}
+                    id={x.id}
+                    title={x.title}
+                    completionDate={x.completionDate || ''}
+                    loading={loading}
+                    onDone={onDone}
+                    onUnDone={onUnDone}
+                    onRemove={onRemove}
+                    onEdit={onEdit}
+                  />
+                );
+              })}
+            </>
           );
         })}
       </ListGroup>
