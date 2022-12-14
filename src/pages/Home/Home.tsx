@@ -239,7 +239,11 @@ const Home = () => {
             onEdit={onEdit}
             onDone={onDone}
             onUnDone={onUnDone}
-            tableStyle={{ border: '1px solid #c16e5f', color: '#c16e5f' }}
+            tableStyle={{
+              border: '1px solid #c16e5f',
+              color: '#c16e5f',
+              boxShadow: '0px 1px 5px 0px #c16e5f',
+            }}
           />
 
           <ListOfTasks
@@ -250,6 +254,11 @@ const Home = () => {
             onEdit={onEdit}
             onDone={onDone}
             onUnDone={onUnDone}
+            tableStyle={{
+              border: '1px solid #5f73c1',
+              color: '#5f73c1',
+              boxShadow: '0px 1px 5px 0px #5f73c1',
+            }}
           />
 
           <ListOfTasks
@@ -276,6 +285,10 @@ const Home = () => {
             onEdit={onEdit}
             onDone={onDone}
             onUnDone={onUnDone}
+            tableStyle={{
+              border: '1px solid #adb5bd',
+              boxShadow: '0px 1px 5px 0px #adb5bd',
+            }}
           />
         </>
       )}
