@@ -2,7 +2,7 @@
 
 // DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-  var signalz = new Signalz('#cvs');
+  var _signalz = new Signalz('#cvs');
 });
 
 //
