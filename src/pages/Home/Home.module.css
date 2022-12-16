@@ -10,6 +10,14 @@
   margin: 0;
 }
 
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+}
+.titleContainer > div {
+  max-width: 75%;
+}
+
 .description {
   margin: 0;
   color: rgb(92, 92, 92);
@@ -21,6 +29,11 @@
   margin: 0;
   color: rgb(55, 55, 55);
   font-size: 0.8em;
+}
+
+.dateCell {
+  display: flex;
+  justify-content: space-around;
 }
 
 .cardButtons {

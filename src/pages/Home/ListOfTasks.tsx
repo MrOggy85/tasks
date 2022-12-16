@@ -7,7 +7,7 @@ import {
   FiSquare,
   FiRepeat,
 } from 'react-icons/fi';
-import { isAfter } from 'date-fns';
+import { isAfter, isSameHour, isTomorrow } from 'date-fns';
 import getPrio from '../../core/getPrio';
 import Pill from '../../components/Pill';
 import DateText from '../../components/DateText';
@@ -24,6 +24,7 @@ type Props = {
   onEdit: (id: number) => void;
   onDone: (id: number) => void;
   onUnDone: (id: number) => void;
+  onPlusOneDay: (id: number) => void;
 };
 
 const ListOfTasks = ({
@@ -35,6 +36,7 @@ const ListOfTasks = ({
   onEdit,
   onDone,
   onUnDone,
+  onPlusOneDay,
 }: Props) => {
   return (
     <>
@@ -44,8 +46,7 @@ const ListOfTasks = ({
             <tr>
               <th style={{ width: '18%' }}>{title}</th>
               <th>Title</th>
-              <th style={{ width: '8%' }}>Start</th>
-              <th style={{ width: '8%' }}>End</th>
+              <th style={{ width: '15%' }}>Date</th>
               <th style={{ width: '15%' }}></th>
             </tr>
           </thead>
@@ -55,6 +56,7 @@ const ListOfTasks = ({
               const notStarted = x.startDate
                 ? isAfter(new Date(x.startDate), new Date())
                 : false;
+              const hasDates = !!x.startDate || !!x.endDate;
 
               return (
                 <tr key={x.id} style={{ opacity: notStarted ? 0.5 : 1 }}>
@@ -106,11 +108,47 @@ const ListOfTasks = ({
                     </span>
                   </td>
                   <td>
-                    <p className={styles.title}>{x.title}</p>
-                    <p className={styles.description}>{x.description}</p>
+                    <div className={styles.titleContainer}>
+                      <div>
+                        <p className={styles.title}>{x.title}</p>
+                        <p className={styles.description}>{x.description}</p>
+                      </div>
+                      <div>
+                        {hasDates && (
+                          <Button
+                            style={{ padding: '0.3rem 0.3rem' }}
+                            variant="outline-success"
+                            type="button"
+                            disabled={loading}
+                            onClick={() => {
+                              onPlusOneDay(x.id);
+                            }}
+                            content="+1 Day"
+                          />
+                        )}
+                      </div>
+                    </div>
                   </td>
-                  <td>{x.startDate ? <DateText date={x.startDate} /> : '-'}</td>
-                  <td>{x.endDate ? <DateText date={x.endDate} /> : '-'}</td>
+                  <td>
+                    <div className={styles.dateCell}>
+                      {x.startDate &&
+                      !isSameHour(
+                        new Date(x.startDate),
+                        new Date(x.endDate || ''),
+                      ) ? (
+                        <DateText date={x.startDate} />
+                      ) : (
+                        isTomorrow(new Date(x.endDate || 0)) && (
+                          <span>Tomorrow</span>
+                        )
+                      )}
+                      {x.endDate && (
+                        <>
+                          <DateText date={x.endDate} />
+                        </>
+                      )}
+                    </div>
+                  </td>
                   <td>
                     {PrioIcon && <PrioIcon />}
                     {x.tags.map((t) => (

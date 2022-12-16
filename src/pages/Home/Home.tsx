@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiRefreshCw, FiFilter } from 'react-icons/fi';
-import { isAfter, isBefore, isSameDay } from 'date-fns';
+import { format, isAfter, isBefore, isSameDay, add } from 'date-fns';
 import { Container, InputGroup, Spinner } from 'react-bootstrap';
-import { getAll, remove, done, unDone } from '../../core/tasks/taskSlice';
+import {
+  getAll,
+  remove,
+  done,
+  unDone,
+  update,
+} from '../../core/tasks/taskSlice';
 import { useAppDispatch } from '../../core/redux/useAppDispatch';
 import { useAppSelector } from '../../core/redux/useAppSelector';
 import Select from '../../components/Select';
@@ -36,6 +42,14 @@ function sortDate(
     return sortOrder === 'asc' ? -1 : 1;
   }
   return new Date(aD).getTime() - new Date(bD).getTime();
+}
+
+type Duration = Parameters<typeof add>[1];
+
+function addDateDuration(dateISOstring: string, duration: Duration) {
+  const date = new Date(dateISOstring);
+  const newDate = add(date, duration);
+  return newDate.toISOString();
 }
 
 const Home = () => {
@@ -122,6 +136,27 @@ const Home = () => {
   };
   const onUnDone = async (id: number) => {
     await dispatch(unDone(id));
+  };
+
+  const onPlusOneDay = async (id: number) => {
+    const task = tasks.find((x) => x.id === id);
+    if (!task) {
+      alert(`No Task found with id: ${id}`);
+      return;
+    }
+
+    await dispatch(
+      update({
+        ...task,
+        tagIds: task.tags.map((tag) => tag.id),
+        startDate: task.startDate
+          ? addDateDuration(task.startDate, { days: 1 })
+          : undefined,
+        endDate: task.endDate
+          ? addDateDuration(task.endDate, { days: 1 })
+          : undefined,
+      }),
+    );
   };
 
   return (
@@ -239,6 +274,7 @@ const Home = () => {
             onEdit={onEdit}
             onDone={onDone}
             onUnDone={onUnDone}
+            onPlusOneDay={onPlusOneDay}
             tableStyle={{
               border: '1px solid #c16e5f',
               color: '#c16e5f',
@@ -254,6 +290,7 @@ const Home = () => {
             onEdit={onEdit}
             onDone={onDone}
             onUnDone={onUnDone}
+            onPlusOneDay={onPlusOneDay}
             tableStyle={{
               border: '1px solid #5f73c1',
               color: '#5f73c1',
@@ -269,6 +306,7 @@ const Home = () => {
             onEdit={onEdit}
             onDone={onDone}
             onUnDone={onUnDone}
+            onPlusOneDay={onPlusOneDay}
             tableStyle={{
               color: '#919295',
               display: 'block',
@@ -285,6 +323,7 @@ const Home = () => {
             onEdit={onEdit}
             onDone={onDone}
             onUnDone={onUnDone}
+            onPlusOneDay={onPlusOneDay}
             tableStyle={{
               border: '1px solid #adb5bd',
               boxShadow: '0px 1px 5px 0px #adb5bd',
