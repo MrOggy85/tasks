@@ -120,7 +120,13 @@ const Home = () => {
         !isSameDay(now, new Date(x.startDate))),
   );
 
-  const somedayTasks = tasks.filter((x) => !x.startDate && !x.endDate);
+  const somedayTasks = tasks
+    .filter((x) => !x.startDate && !x.endDate)
+    .sort((a, b) => {
+      return sortOrder === 'desc'
+        ? a.priority - b.priority
+        : b.priority - a.priority;
+    });
   const onUpdate = async () => {
     await dispatch(getAll());
   };
