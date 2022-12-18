@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiRefreshCw, FiFilter } from 'react-icons/fi';
+import { FiRefreshCw, FiFilter, FiDownloadCloud } from 'react-icons/fi';
 import { format, isAfter, isBefore, isSameDay, add } from 'date-fns';
 import { Container, InputGroup, Spinner } from 'react-bootstrap';
 import {
@@ -62,6 +62,8 @@ const Home = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [showSorting, setShowSorting] = useState(false);
 
+  const [lastRefresh, setLastRefresh] = useState(new Date());
+
   const isMobileScreen = window.screen.width < 400;
 
   const tasks = rawTasks
@@ -122,6 +124,17 @@ const Home = () => {
   const onUpdate = async () => {
     await dispatch(getAll());
   };
+
+  const onRefresh = () => {
+    setLastRefresh(new Date());
+  };
+
+  useEffect(() => {
+    if (!loadingAll) {
+      setLastRefresh(new Date());
+    }
+  }, [loadingAll]);
+
   const onRemove = async (id: number) => {
     const yes = confirm(`Delete ${id}?`);
     if (yes) {
@@ -174,6 +187,22 @@ const Home = () => {
             loadingAll ? (
               <Spinner size="sm" animation={'border'} />
             ) : (
+              <FiDownloadCloud />
+            )
+          }
+        />
+        <Button
+          style={{ marginBottom: 4, marginRight: 4 }}
+          variant="outline-success"
+          type="button"
+          disabled={loadingAll}
+          onClick={() => {
+            onRefresh();
+          }}
+          content={
+            loadingAll ? (
+              <Spinner size="sm" animation={'border'} />
+            ) : (
               <FiRefreshCw />
             )
           }
@@ -187,6 +216,15 @@ const Home = () => {
           }}
           content={<FiFilter />}
         />
+        <p style={{ margin: 0 }}>
+          Last refresh:{' '}
+          <span style={{ fontSize: '1.1rem', fontWeight: 300 }}>
+            {format(lastRefresh, 'yyyy-MM-dd')}
+          </span>
+          <span style={{ fontSize: '1.3rem', marginLeft: '0.2rem' }}>
+            {format(lastRefresh, 'HH:mm:ss')}
+          </span>
+        </p>
       </div>
 
       {showSorting && (
